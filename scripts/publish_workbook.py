@@ -10,10 +10,10 @@ def raiseError(e, file_path):
     exit(1)
 
 
-def signin(site_name, is_site_default, server_url):
+def signin(data):
     tableau_auth = TSC.TableauAuth(
-        args.username, args.password, None if is_site_default else site_name)
-    server = TSC.Server(server_url, use_server_version=True)
+        args.username, args.password, None if data['is_site_default'] else data['site_name'])
+    server = TSC.Server(data['server_url'], use_server_version=True)
     server.auth.sign_in(tableau_auth)
     return server
 
@@ -87,11 +87,9 @@ def main(args):
     project_data_json = json.loads(args.project_data)
 
     try:
-
         for data in project_data_json:
             # Step 1: Sign in to Tableau server.
-            server = signin(data['site_name'],
-                            data['is_site_default'], data['server_url'])
+            server = signin(data)
 
             # updateProjectPermissions(server, data['project_path'])
 

@@ -2,7 +2,6 @@ import os
 import json
 import argparse
 import tableauserverclient as TSC
-from pprint import pprint
 
 
 def raiseError(e, file_path):
@@ -31,7 +30,7 @@ def getProject(server, project_path, file_path):
             f"The project for {file_path} workbook could not be found.", file_path)
 
 
-def publishWB(server, project_id, data, file_path, name, show_tabs, hidden_views, tags, project_path, site_name):
+def publishWB(server, project_id, data):
     wb_path = os.path.dirname(os.path.realpath(__file__)).rsplit(
         '/', 1)[0] + "/workbooks/" + data['file_path']
 
@@ -105,8 +104,7 @@ def main(args):
                     server, data['project_path'], data['file_path'])
 
                 # Step 3: Form a new workbook item and publish.
-                publishWB(server, project_id, data, data['file_path'], data['name'],
-                          data['show_tabs'], data['hidden_views'], data['tags'], data['project_path'], data['site_name'])
+                publishWB(server, project_id, data)
 
             # Step 4: Sign Out to the Tableau Server
             server.auth.sign_out()

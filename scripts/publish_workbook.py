@@ -18,19 +18,21 @@ def signin(data):
     return server
 
 
-def getProject(server, project_path, file_path):
+def getProject(server, data):
     all_projects, pagination_item = server.projects.get()
     project = next(
-        (project for project in all_projects if project.name == project_path), None)
+        (project for project in all_projects if project.name == data['project_path']), None)
 
     if project.id is not None:
         return project.id
     else:
         raiseError(
-            f"The project for {file_path} workbook could not be found.", file_path)
+            f"The project for {data['file_path']} workbook could not be found.")
 
 
-def publishWB(server, project_id, data):
+def publishWB(server, data):
+    project_id = getProject(server, data)
+
     wb_path = os.path.dirname(os.path.realpath(__file__)).rsplit(
         '/', 1)[0] + "/workbooks/" + data['file_path']
 
@@ -83,6 +85,18 @@ def updateProjectPermissions(server, project_path):
             print(f"\t{capability} - {capabilities[capability]}")
 
 
+def createSchedule(server):
+    # Create an interval to run every 2 hours between 2:30AM and 11:00PM
+    hourly_interval = TSC.HourlyInterval(start_time=time(2, 30),
+                                         end_time=time(23, 0),
+                                         interval_value=2)
+    # Create schedule item
+    hourly_schedule = TSC.ScheduleItem(
+        "Hourly-Schedule", 50, TSC.ScheduleItem.Type.Extract, TSC.ScheduleItem.ExecutionOrder.Parallel, hourly_interval)
+    # Create schedule
+    hourly_schedule = server.schedules.create(hourly_schedule)
+
+
 def main(args):
     project_data_json = json.loads(args.project_data)
     try:
@@ -96,14 +110,16 @@ def main(args):
                 raiseError(
                     f"The project project_path field is Null in JSON Template.", data['file_path'])
             else:
-                # Step 2: Get all the projects on server, then look for the required one.
-                project_id = getProject(
-                    server, data['project_path'], data['file_path'])
+                # Step 2: Form a new workbook item and publish.
+                publishWB(server, data)
 
-                # Step 3: Form a new workbook item and publish.
-                publishWB(server, project_id, data)
+                # Step 3: Update Project permissions
+                # updateProjectPermissions(server, data['project_path'])
 
-            # Step 4: Sign Out to the Tableau Server
+                # Step 4: Create New Schedule
+                # createSchedule(server)
+
+            # Step 5: Sign Out to the Tableau Server
             server.auth.sign_out()
 
     except Exception as e:

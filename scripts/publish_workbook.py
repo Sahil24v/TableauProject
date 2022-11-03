@@ -87,7 +87,6 @@ def main(args):
     project_data_json = json.loads(args.project_data)
 
     try:
-
         for data in project_data_json:
             # Step 1: Sign in to Tableau server.
             server = signin(data)

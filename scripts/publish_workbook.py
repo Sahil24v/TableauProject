@@ -40,7 +40,7 @@ def publishWB(server, project_id, data):
         new_workbook, wb_path, 'Overwrite', hidden_views=data['hidden_views'])
 
     print(
-        f"\nSuccessfully published {file_path} Workbook in {data['project_path']} project in {data['site_name']} site.")
+        f"\nSuccessfully published {data['file_path']} Workbook in {data['project_path']} project in {data['site_name']} site.")
 
     # Update Workbook and set tags
     if len(data['tags']) > 0:

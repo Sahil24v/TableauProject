@@ -40,7 +40,7 @@ def publishWB(server, project_id, data):
         new_workbook, wb_path, 'Overwrite', hidden_views=data['hidden_views'])
 
     print(
-        f"\nSuccessfully published {file_path} Workbook in {data['project_path']} project in {data['site_name']} site.")
+        f"\nSuccessfully published {data['file_path']} Workbook in {data['project_path']} project in {data['site_name']} site.")
 
     # Update Workbook and set tags
     if len(data['tags']) > 0:
@@ -85,7 +85,6 @@ def updateProjectPermissions(server, project_path):
 
 def main(args):
     project_data_json = json.loads(args.project_data)
-
     try:
         for data in project_data_json:
             # Step 1: Sign in to Tableau server.
@@ -95,7 +94,7 @@ def main(args):
 
             if data['project_path'] is None:
                 raiseError(
-                    f"The project project_path field is Null in JSON Template.", file_path)
+                    f"The project project_path field is Null in JSON Template.", data['file_path'])
             else:
                 # Step 2: Get all the projects on server, then look for the required one.
                 project_id = getProject(

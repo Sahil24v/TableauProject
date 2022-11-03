@@ -94,7 +94,7 @@ def main(args):
 
             if data['project_path'] is None:
                 raiseError(
-                    f"The project project_path field is Null in JSON Template.", file_path)
+                    f"The project project_path field is Null in JSON Template.", data['file_path'])
             else:
                 # Step 2: Get all the projects on server, then look for the required one.
                 project_id = getProject(

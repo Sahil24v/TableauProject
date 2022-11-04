@@ -9,6 +9,8 @@ import xml.etree.ElementTree as ET
 #                "ExportImage", "Delete", "ChangeHierarchy", "ChangePermissions", "WebAuthoring", "ExportXml"}
 
 xmlns = {'t': 'http://tableau.com/api'}
+class ApiCallError(Exception):
+    pass
 def raiseError(e, file_path):
     print(f"{file_path} workbook is not published.")
     raise LookupError(e)

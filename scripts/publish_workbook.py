@@ -101,7 +101,22 @@ def createSchedule(server):
     # Create schedule
     hourly_schedule = server.schedules.create(hourly_schedule)
 
+def _check_status(server_response, success_code):
+    if server_response.status_code != success_code:
+        parsed_response = ET.fromstring(server_response.text)
 
+        # Obtain the 3 xml tags from the response: error, summary, and detail tags
+        error_element = parsed_response.find('t:error', namespaces=xmlns)
+        summary_element = parsed_response.find('.//t:summary', namespaces=xmlns)
+        detail_element = parsed_response.find('.//t:detail', namespaces=xmlns)
+
+        # Retrieve the error code, summary, and detail if the response contains them
+        code = error_element.get('code', 'unknown') if error_element is not None else 'unknown code'
+        summary = summary_element.text if summary_element is not None else 'unknown summary'
+        detail = detail_element.text if detail_element is not None else 'unknown detail'
+        error_message = '{0}: {1} - {2}'.format(code, summary, detail)
+        raise ApiCallError(error_message)
+    return
 def getWBID(server, data):
     all_workbooks_items, pagination_item = server.workbooks.get()
     return [workbook.id for workbook in all_workbooks_items if workbook.name == data['name']]
@@ -131,6 +146,7 @@ def add_permission(data, workbook_id, user_id):
     server_request = requests.put(url, data=xml_request, headers={
                                   'x-tableau-auth': data['auth_token']})
     print(server_request)
+    _check_status(server_request, 200)
 
 
 def main(args):

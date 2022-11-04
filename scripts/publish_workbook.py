@@ -4,6 +4,7 @@ import argparse
 import tableauserverclient as TSC
 import requests
 import xml.etree.ElementTree as ET
+from requests.auth import HTTPBasicAuth
 
 
 xmlns = {'t': 'http://tableau.com/api'}
@@ -144,8 +145,7 @@ def add_permission(data, workbook_id, user_id):
     xml_request = ET.tostring(xml_request)
 
     print(xml_request)
-    server_request = requests.put(url, data=xml_request, auth=(args.username, args.password), headers={
-                                  'x-tableau-auth': data['auth_token']})
+    server_request = requests.put(url, data=xml_request, auth=HTTPBasicAuth(args.username, args.password))
     print(server_request)
     _check_status(server_request, 200)
 

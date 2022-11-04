@@ -35,13 +35,9 @@ def _check_status(server_response, success_code):
 def signin(data):
     tableau_auth = TSC.TableauAuth(
         args.username, args.password, None if data['is_site_default'] else data['site_name'])
-    server1 = TSC.Server(data['server_url'], use_server_version=True)
-    server = server1.auth.sign_in(tableau_auth)
-    
-    parsed_response = ET.fromstring(server)
-    print('parsed_response ::', parsed_response)
-    token = parsed_response.find('t:credentials', namespaces=xmlns).get('token')
-    print('token ::', token)
+    server = TSC.Server(data['server_url'], use_server_version=True)
+    server.auth.sign_in(tableau_auth)
+    print(type(server))
     return server
 
 
@@ -160,8 +156,8 @@ def main(args):
             server = signin(data)
 
             # if data['project_path'] is None:
-            #     raise LookupError(
-            #         f"The project project_path field is Null in JSON Template.", data['file_path'])
+                # raise LookupError(
+                    # f"The project project_path field is Null in JSON Template.", data['file_path'])
             # else:
                 # Step: Form a new workbook item and publish.
                 # publishWB(server, data)

@@ -38,18 +38,12 @@ def signin(data):
     server = TSC.Server(data['server_url'], use_server_version=True)
     server.auth.sign_in(tableau_auth)
     
-    a = vars(server)
-    print("type of a ::", type(a))
-    print(a)
-    print(a.get('_auth_token'))
-    # print(', '.join("%s: %s" % item for item in a.items()))
-    # for item in a.items():
-    #     print(type(item))
-    #     print(item[3])
-        # for i in item:
-        #     print(i.get('_auth_token'))
+    server_response = vars(server)
+    uth_token = server_response.get('_auth_token')
+    version = server_response.get('version')
+    user_id = server_response.get('_user_id')
     
-    return server
+    return server, uth_token, version, user_id
 
 
 def getProject(server, data):
@@ -136,9 +130,9 @@ def getWBID(server, data):
     return [workbook.id for workbook in all_workbooks_items if workbook.name == data['name']]
 
 
-def getUserID(server, data):
-    all_users, pagination_item = server.users.get()
-    return [user.id for user in all_users if user.name == data['user_name']]
+# def getUserID(server, data):
+#     all_users, pagination_item = server.users.get()
+#     return [user.id for user in all_users if user.name == data['user_name']]
 
 
 def add_permission(data, workbook_id, user_id):
@@ -164,7 +158,8 @@ def main(args):
     try:
         for data in project_data_json:
             # Step: Sign in to Tableau server.
-            server = signin(data)
+            server, uth_token, version, user_id = signin(data)
+            print(f'{uth_token}, {version}, {_user_id}')
 
             # if data['project_path'] is None:
                 # raise LookupError(

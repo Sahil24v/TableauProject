@@ -154,7 +154,6 @@ def main(args):
         for data in project_data_json:
             # Step: Sign in to Tableau server.
             server, auth_token, version, user_id = signin(data)
-            print(f'{auth_token}, {version}, {user_id}')
 
             if data['project_path'] is None:
                 raise LookupError(

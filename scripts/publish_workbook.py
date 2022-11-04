@@ -97,33 +97,36 @@ def createSchedule(server):
     hourly_schedule = server.schedules.create(hourly_schedule)
 
 
+def getWBID(server, data):
+    all_workbooks_items, pagination_item = server.workbooks.get()
+    return [workbook.id for workbook in all_workbooks_items if workbook.name == data['name']]
+
+
 def main(args):
     project_data_json = json.loads(args.project_data)
     try:
         for data in project_data_json:
-            # Step 1: Sign in to Tableau server.
+            # Step: Sign in to Tableau server.
             server = signin(data)
 
-            # updateProjectPermissions(server, data['project_path'])
+            if data['project_path'] is None:
+                raiseError(
+                    f"The project project_path field is Null in JSON Template.", data['file_path'])
+            else:
+                # Step: Form a new workbook item and publish.
+                publishWB(server, data)
 
-            all_workbooks_items, pagination_item = server.workbooks.get()  
-            # print names of first 100 workbooks
-            print([workbook.id for workbook in all_workbooks_items if workbook.name==data['name']])
-            
-            # if data['project_path'] is None:
-            #     raiseError(
-            #         f"The project project_path field is Null in JSON Template.", data['file_path'])
-            # else:
-                # Step 2: Form a new workbook item and publish.
-                # publishWB(server, data)
+                # Step: Get the workbook ID from the Name
+                wb_id = getWBID(server, data)
+                print(wb_id)
 
-                # Step 3: Update Project permissions
-                # updateProjectPermissions(server, data['project_path'])
+                # Step: Update Project permissions
+                updateProjectPermissions(server, data['project_path'])
 
-                # Step 4: Create New Schedule
-                # createSchedule(server)
+                # Step: Create New Schedule
+                createSchedule(server)
 
-            # Step 5: Sign Out to the Tableau Server
+            # Step: Sign Out to the Tableau Server
             server.auth.sign_out()
 
     except Exception as e:

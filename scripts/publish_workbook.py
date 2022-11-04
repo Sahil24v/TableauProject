@@ -50,7 +50,6 @@ def getProject(server, data):
     else:
         raise LookupError(
             f"The project for {data['file_path']} workbook could not be found.")
-        exit(1)
 
 
 def publishWB(server, data):
@@ -144,9 +143,8 @@ def add_permission(data, workbook_id, user_id):
                   name=data['permission_name'], mode=data['permission_mode'])
     xml_request = ET.tostring(xml_request)
 
-    print(xml_request)
-    server_request = requests.put(url, data=xml_request, auth=HTTPBasicAuth(args.username, args.password))
-    print(server_request)
+    server_request = requests.put(
+        url, data=xml_request, auth=HTTPBasicAuth(args.username, args.password))
     _check_status(server_request, 200)
 
 
@@ -160,7 +158,6 @@ def main(args):
             if data['project_path'] is None:
                 raise LookupError(
                     f"The project project_path field is Null in JSON Template.", data['file_path'])
-                exit(1)
             else:
                 # Step: Form a new workbook item and publish.
                 # publishWB(server, data)

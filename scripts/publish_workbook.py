@@ -2,6 +2,8 @@ import os
 import json
 import argparse
 import tableauserverclient as TSC
+import requests
+import xml.etree.ElementTree as ET
 
 
 def raiseError(e, file_path):
@@ -101,6 +103,30 @@ def getWBID(server, data):
     all_workbooks_items, pagination_item = server.workbooks.get()
     return [workbook.id for workbook in all_workbooks_items if workbook.name == data['name']]
 
+def getUserID(server, data):
+    all_users, pagination_item = server.users.get()
+    print([user.name for user in all_users])
+    return [user.id for user in all_users if user.name == data['user_name']]
+    
+def add_permission(server, auth_token, site_id, workbook_id, user_id, permission_name, permission_mode):
+    url = f"https://tableau.devinvh.com/api/3.15/sites/{site_id}/workbooks/{workbook_id}/permissions"
+
+    # Build the request
+    xml_request = ET.Element('tsRequest')
+    permissions_element = ET.SubElement(xml_request, 'permissions')
+    ET.SubElement(permissions_element, 'workbook', id=workbook_id)
+    grantee_element = ET.SubElement(permissions_element, 'granteeCapabilities')
+    ET.SubElement(grantee_element, 'user', id=user_id)
+    capabilities_element = ET.SubElement(grantee_element, 'capabilities')
+    ET.SubElement(capabilities_element, 'capability',
+                  name=permission_name, mode=permission_mode)
+    xml_request = ET.tostring(xml_request)
+
+    server_request = requests.put(url, data=xml_request, headers={
+                                  'x-tableau-auth': auth_token})
+    _check_status(server_request, 200)
+    return
+
 
 def main(args):
     project_data_json = json.loads(args.project_data)
@@ -114,17 +140,21 @@ def main(args):
                     f"The project project_path field is Null in JSON Template.", data['file_path'])
             else:
                 # Step: Form a new workbook item and publish.
-                publishWB(server, data)
+                # publishWB(server, data)
 
-                # Step: Get the workbook ID from the Name
+                # Step: Get the Workbook ID from the Workbook Name
                 wb_id = getWBID(server, data)
                 print(wb_id)
 
+                # Step: Get the User ID from the User Name
+                user_id = getUserID(server, data)
+                print(user_id)
+                    
                 # Step: Update Project permissions
-                updateProjectPermissions(server, data['project_path'])
+                # updateProjectPermissions(server, data['project_path'])
 
                 # Step: Create New Schedule
-                createSchedule(server)
+                # createSchedule(server)
 
             # Step: Sign Out to the Tableau Server
             server.auth.sign_out()

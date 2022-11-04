@@ -40,7 +40,7 @@ def signin(data):
     print(type(server))
     
     at = vars(server)
-    print(', '.join("%s: %s" % item for item in at.items()))
+    print(item._auth_token for item in at.items())
     
     return server
 

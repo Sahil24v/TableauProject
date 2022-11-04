@@ -166,7 +166,7 @@ def main(args):
                 # Step: Get the Workbook ID from the Workbook Name
                 # Sales-Dashboard ID : 70f45d7c-1e15-4864-8ca5-d51c45180f01
                 wb_id = getWBID(server, data)
-
+                print(wb_id)
                 # Step: Update Project permissions
                 add_permission(data, wb_id, user_id, version, auth_token)
                 # updateProjectPermissions(server, data['project_path'])

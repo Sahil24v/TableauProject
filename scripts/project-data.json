@@ -1,7 +1,7 @@
 {
   "workbooks": [
     {
-      "auth_tocken": "qhANnNG3Siux++mMu7MYxA==:Icrm2ccskf2udf4wE4kVMF1vYGAHL0nz",
+      "auth_token": "qhANnNG3Siux++mMu7MYxA==:Icrm2ccskf2udf4wE4kVMF1vYGAHL0nz",
       "name": "Sales-Dashboard",
       "user_name": "Nirav.Padia",
       "server_url": "https://tableau.devinvh.com/",

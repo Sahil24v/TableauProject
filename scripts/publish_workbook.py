@@ -13,9 +13,22 @@ class ApiCallError(Exception):
     pass
 
 
-def raiseError(e):
-    raise LookupError(e)
-    exit(1)
+def _check_status(server_response, success_code):
+    if server_response.status_code != success_code:
+        parsed_response = ET.fromstring(server_response.text)
+
+        error_element = parsed_response.find('t:error', namespaces=xmlns)
+        summary_element = parsed_response.find(
+            './/t:summary', namespaces=xmlns)
+        detail_element = parsed_response.find('.//t:detail', namespaces=xmlns)
+
+        code = error_element.get(
+            'code', 'unknown') if error_element is not None else 'unknown code'
+        summary = summary_element.text if summary_element is not None else 'unknown summary'
+        detail = detail_element.text if detail_element is not None else 'unknown detail'
+        error_message = f'{code}: {summary} - {detail}'
+        raise ApiCallError(error_message)
+    return
 
 
 def signin(data):
@@ -34,8 +47,9 @@ def getProject(server, data):
     if project.id is not None:
         return project.id
     else:
-        raiseError(
+        raise LookupError(
             f"The project for {data['file_path']} workbook could not be found.")
+        exit(1)
 
 
 def publishWB(server, data):
@@ -115,26 +129,6 @@ def getUserID(server, data):
     return [user.id for user in all_users if user.name == data['user_name']]
 
 
-def _check_status(server_response, success_code):
-    if server_response.status_code != success_code:
-        parsed_response = ET.fromstring(server_response.text)
-
-        # Obtain the 3 xml tags from the response: error, summary, and detail tags
-        error_element = parsed_response.find('t:error', namespaces=xmlns)
-        summary_element = parsed_response.find(
-            './/t:summary', namespaces=xmlns)
-        detail_element = parsed_response.find('.//t:detail', namespaces=xmlns)
-
-        # Retrieve the error code, summary, and detail if the response contains them
-        code = error_element.get(
-            'code', 'unknown') if error_element is not None else 'unknown code'
-        summary = summary_element.text if summary_element is not None else 'unknown summary'
-        detail = detail_element.text if detail_element is not None else 'unknown detail'
-        error_message = '{0}: {1} - {2}'.format(code, summary, detail)
-        raise ApiCallError(error_message)
-    return
-
-
 def add_permission(data, workbook_id, user_id):
     url = f"https://tableau.devinvh.com/api/3.17/sites/{data['site_id']}/workbooks/{workbook_id}/permissions"
 
@@ -150,8 +144,7 @@ def add_permission(data, workbook_id, user_id):
     xml_request = ET.tostring(xml_request)
 
     print(xml_request)
-    server_request = requests.put(url, data=xml_request, headers={
-                                  'x-tableau-auth': data['auth_token']})
+    server_request = requests.put(url, data=xml_request, auth=(args.username, args.password))
     print(server_request)
     _check_status(server_request, 200)
 
@@ -164,8 +157,9 @@ def main(args):
             server = signin(data)
 
             if data['project_path'] is None:
-                raiseError(
-                    f"The project project_path field is Null in JSON Template.")
+                raise LookupError(
+                    f"The project project_path field is Null in JSON Template.", data['file_path'])
+                exit(1)
             else:
                 # Step: Form a new workbook item and publish.
                 # publishWB(server, data)

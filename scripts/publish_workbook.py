@@ -39,8 +39,11 @@ def signin(data):
     server.auth.sign_in(tableau_auth)
     print(type(server))
     
-    at = vars(server)
-    print(item._auth_token for item in at.items())
+    a = vars(server)
+    # print(', '.join("%s: %s" % item for item in a.items()))
+    for item in a.items():
+        for i in item:
+            print(i)
     
     return server
 

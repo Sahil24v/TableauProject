@@ -131,7 +131,7 @@ def getWBID(server, data):
 
 
 def add_permission(data, wb_id, user_id, version, auth_token):
-    url = f"https://tableau.devinvh.com/api/{version}/sites/{data['site_id']}/workbooks/{workbook_id}/permissions"
+    url = f"https://tableau.devinvh.com/api/{version}/sites/{data['site_id']}/workbooks/{wb_id}/permissions"
 
     xml_request = ET.Element('tsRequest')
     permissions_element = ET.SubElement(xml_request, 'permissions')

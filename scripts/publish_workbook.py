@@ -106,12 +106,17 @@ def main(args):
 
             # updateProjectPermissions(server, data['project_path'])
 
-            if data['project_path'] is None:
-                raiseError(
-                    f"The project project_path field is Null in JSON Template.", data['file_path'])
-            else:
+            all_workbooks_items, pagination_item = server.workbooks.get()  
+            # print names of first 100 workbooks
+            print([workbook.name for workbook in all_workbooks_items])
+            print([workbook.id for workbook in all_workbooks_items])
+            
+            # if data['project_path'] is None:
+            #     raiseError(
+            #         f"The project project_path field is Null in JSON Template.", data['file_path'])
+            # else:
                 # Step 2: Form a new workbook item and publish.
-                publishWB(server, data)
+                # publishWB(server, data)
 
                 # Step 3: Update Project permissions
                 # updateProjectPermissions(server, data['project_path'])

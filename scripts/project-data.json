@@ -1,6 +1,7 @@
 {
   "workbooks": [
     {
+      "auth_tocken": "qhANnNG3Siux++mMu7MYxA==:Icrm2ccskf2udf4wE4kVMF1vYGAHL0nz",
       "name": "Sales-Dashboard",
       "user_name": "Nirav.Padia",
       "server_url": "https://tableau.devinvh.com/",
@@ -13,7 +14,9 @@
       "description": "Sample description",
       "show_tabs": true,
       "is_wb_new": true,
-      "is_site_default": true
+      "is_site_default": true,
+      "permission_name": "AddComment",
+      "permission_mode": "Allow"
     }
   ]
 }

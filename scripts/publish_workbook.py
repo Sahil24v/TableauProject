@@ -5,6 +5,9 @@ import tableauserverclient as TSC
 import requests
 import xml.etree.ElementTree as ET
 
+# permissions = {"Read", "Write", "Filter", "AddComment", "ViewComments", "ShareView", "ExportData", "ViewUnderlyingData",
+#                "ExportImage", "Delete", "ChangeHierarchy", "ChangePermissions", "WebAuthoring", "ExportXml"}
+
 
 def raiseError(e, file_path):
     print(f"{file_path} workbook is not published.")
@@ -103,13 +106,15 @@ def getWBID(server, data):
     all_workbooks_items, pagination_item = server.workbooks.get()
     return [workbook.id for workbook in all_workbooks_items if workbook.name == data['name']]
 
+
 def getUserID(server, data):
     all_users, pagination_item = server.users.get()
     print([user.name for user in all_users])
     return [user.id for user in all_users if user.name == data['user_name']]
-    
-def add_permission(server, auth_token, site_id, workbook_id, user_id, permission_name, permission_mode):
-    url = f"https://tableau.devinvh.com/api/3.15/sites/{site_id}/workbooks/{workbook_id}/permissions"
+
+
+def add_permission(data, workbook_id, user_id):
+    url = f"https://tableau.devinvh.com/api/3.15/sites/{data['site_id']}/workbooks/{workbook_id}/permissions"
 
     # Build the request
     xml_request = ET.Element('tsRequest')
@@ -119,13 +124,11 @@ def add_permission(server, auth_token, site_id, workbook_id, user_id, permission
     ET.SubElement(grantee_element, 'user', id=user_id)
     capabilities_element = ET.SubElement(grantee_element, 'capabilities')
     ET.SubElement(capabilities_element, 'capability',
-                  name=permission_name, mode=permission_mode)
+                  name=data['permission_name'], mode=data['permission_mode'])
     xml_request = ET.tostring(xml_request)
 
     server_request = requests.put(url, data=xml_request, headers={
-                                  'x-tableau-auth': auth_token})
-    _check_status(server_request, 200)
-    return
+                                  'x-tableau-auth': data['auth_token']})
 
 
 def main(args):
@@ -149,7 +152,8 @@ def main(args):
                 # Step: Get the User ID from the User Name
                 user_id = getUserID(server, data)
                 print(user_id)
-                    
+
+                add_permission(data, wb_id, user_id)
                 # Step: Update Project permissions
                 # updateProjectPermissions(server, data['project_path'])
 

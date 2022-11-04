@@ -41,6 +41,7 @@ def signin(data):
     a = vars(server)
     print("type of a ::", type(a))
     print(a)
+    print(a.get('_auth_token'))
     # print(', '.join("%s: %s" % item for item in a.items()))
     # for item in a.items():
     #     print(type(item))

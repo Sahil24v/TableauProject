@@ -39,11 +39,11 @@ def signin(data):
     server.auth.sign_in(tableau_auth)
     
     server_response = vars(server)
-    uth_token = server_response.get('_auth_token')
+    auth_token = server_response.get('_auth_token')
     version = server_response.get('version')
     user_id = server_response.get('_user_id')
     
-    return server, uth_token, version, user_id
+    return server, auth_token, version, user_id
 
 
 def getProject(server, data):
@@ -130,17 +130,12 @@ def getWBID(server, data):
     return [workbook.id for workbook in all_workbooks_items if workbook.name == data['name']]
 
 
-# def getUserID(server, data):
-#     all_users, pagination_item = server.users.get()
-#     return [user.id for user in all_users if user.name == data['user_name']]
-
-
-def add_permission(data, workbook_id, user_id):
-    url = f"https://tableau.devinvh.com/api/3.15/sites/{data['site_id']}/workbooks/{workbook_id}/permissions"
+def add_permission(data, wb_id, user_id, version, auth_token):
+    url = f"https://tableau.devinvh.com/api/{version}/sites/{data['site_id']}/workbooks/{workbook_id}/permissions"
 
     xml_request = ET.Element('tsRequest')
     permissions_element = ET.SubElement(xml_request, 'permissions')
-    ET.SubElement(permissions_element, 'workbook', id=workbook_id)
+    ET.SubElement(permissions_element, 'workbook', id=wb_id)
     grantee_element = ET.SubElement(permissions_element, 'granteeCapabilities')
     ET.SubElement(grantee_element, 'user', id=user_id)
     capabilities_element = ET.SubElement(grantee_element, 'capabilities')
@@ -149,7 +144,7 @@ def add_permission(data, workbook_id, user_id):
     xml_request = ET.tostring(xml_request)
 
     server_request = requests.put(
-        url, data=xml_request,  headers={'x-tableau-auth': "imFEzbxgSnu07uXD4gF5WQ|QCKPjwvf9ndI0O61n3BjJ86IOdg4sZFf"})
+        url, data=xml_request,  headers={'x-tableau-auth': auth_token})
     _check_status(server_request, 200)
 
 
@@ -158,25 +153,22 @@ def main(args):
     try:
         for data in project_data_json:
             # Step: Sign in to Tableau server.
-            server, uth_token, version, user_id = signin(data)
-            print(f'{uth_token}, {version}, {user_id}')
+            server, auth_token, version, user_id = signin(data)
+            print(f'{auth_token}, {version}, {user_id}')
 
-            # if data['project_path'] is None:
-                # raise LookupError(
-                    # f"The project project_path field is Null in JSON Template.", data['file_path'])
-            # else:
+            if data['project_path'] is None:
+                raise LookupError(
+                    f"The project project_path field is Null in JSON Template.", data['file_path'])
+            else:
                 # Step: Form a new workbook item and publish.
                 # publishWB(server, data)
 
                 # Step: Get the Workbook ID from the Workbook Name
                 # Sales-Dashboard ID : 70f45d7c-1e15-4864-8ca5-d51c45180f01
-                # wb_id = getWBID(server, data)
+                wb_id = getWBID(server, data)
 
-                # Step: Get the User ID from the User Name
-                # user_id = getUserID(server, data)
-
-                # add_permission(data, wb_id, user_id)
                 # Step: Update Project permissions
+                add_permission(data, wb_id, user_id, version, auth_token)
                 # updateProjectPermissions(server, data['project_path'])
 
                 # Step: Create New Schedule

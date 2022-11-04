@@ -37,13 +37,14 @@ def signin(data):
         args.username, args.password, None if data['is_site_default'] else data['site_name'])
     server = TSC.Server(data['server_url'], use_server_version=True)
     server.auth.sign_in(tableau_auth)
-    print(type(server))
     
     a = vars(server)
+    print("type of a ::", type(a))
+    print(a)
     # print(', '.join("%s: %s" % item for item in a.items()))
-    for item in a.items():
-        print(type(item))
-        print(item[3])
+    # for item in a.items():
+    #     print(type(item))
+    #     print(item[3])
         # for i in item:
         #     print(i.get('_auth_token'))
     

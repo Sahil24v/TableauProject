@@ -5,8 +5,6 @@ import tableauserverclient as TSC
 import requests
 import xml.etree.ElementTree as ET
 
-# permissions = {"Read", "Write", "Filter", "AddComment", "ViewComments", "ShareView", "ExportData", "ViewUnderlyingData",
-#                "ExportImage", "Delete", "ChangeHierarchy", "ChangePermissions", "WebAuthoring", "ExportXml"}
 
 xmlns = {'t': 'http://tableau.com/api'}
 
@@ -15,8 +13,7 @@ class ApiCallError(Exception):
     pass
 
 
-def raiseError(e, file_path):
-    print(f"{file_path} workbook is not published.")
+def raiseError(e):
     raise LookupError(e)
     exit(1)
 
@@ -108,6 +105,16 @@ def createSchedule(server):
     hourly_schedule = server.schedules.create(hourly_schedule)
 
 
+def getWBID(server, data):
+    all_workbooks_items, pagination_item = server.workbooks.get()
+    return [workbook.id for workbook in all_workbooks_items if workbook.name == data['name']]
+
+
+def getUserID(server, data):
+    all_users, pagination_item = server.users.get()
+    return [user.id for user in all_users if user.name == data['user_name']]
+
+
 def _check_status(server_response, success_code):
     if server_response.status_code != success_code:
         parsed_response = ET.fromstring(server_response.text)
@@ -126,17 +133,6 @@ def _check_status(server_response, success_code):
         error_message = '{0}: {1} - {2}'.format(code, summary, detail)
         raise ApiCallError(error_message)
     return
-
-
-def getWBID(server, data):
-    all_workbooks_items, pagination_item = server.workbooks.get()
-    return [workbook.id for workbook in all_workbooks_items if workbook.name == data['name']]
-
-
-def getUserID(server, data):
-    all_users, pagination_item = server.users.get()
-    print([user.name for user in all_users])
-    return [user.id for user in all_users if user.name == data['user_name']]
 
 
 def add_permission(data, workbook_id, user_id):
@@ -169,18 +165,17 @@ def main(args):
 
             if data['project_path'] is None:
                 raiseError(
-                    f"The project project_path field is Null in JSON Template.", data['file_path'])
+                    f"The project project_path field is Null in JSON Template.")
             else:
                 # Step: Form a new workbook item and publish.
                 # publishWB(server, data)
 
                 # Step: Get the Workbook ID from the Workbook Name
+                # Sales-Dashboard ID : 70f45d7c-1e15-4864-8ca5-d51c45180f01
                 wb_id = getWBID(server, data)
-                print(wb_id)
 
                 # Step: Get the User ID from the User Name
                 user_id = getUserID(server, data)
-                print(user_id)
 
                 add_permission(data, wb_id, user_id)
                 # Step: Update Project permissions
@@ -193,7 +188,7 @@ def main(args):
             server.auth.sign_out()
 
     except Exception as e:
-        print("Workbook not published.\n", e)
+        print("Something went wrong, Error occured.\n", e)
         exit(1)
 
 

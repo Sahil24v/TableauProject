@@ -108,8 +108,7 @@ def main(args):
 
             all_workbooks_items, pagination_item = server.workbooks.get()  
             # print names of first 100 workbooks
-            print([workbook.name for workbook in all_workbooks_items])
-            print([workbook.id for workbook in all_workbooks_items])
+            print([workbook.id for workbook in all_workbooks_items if workbook.name==data['name']])
             
             # if data['project_path'] is None:
             #     raiseError(

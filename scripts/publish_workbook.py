@@ -38,6 +38,10 @@ def signin(data):
     server = TSC.Server(data['server_url'], use_server_version=True)
     server.auth.sign_in(tableau_auth)
     print(type(server))
+    
+    at = vars(server)
+    print(', '.join("%s: %s" % item for item in at.items()))
+    
     return server
 
 

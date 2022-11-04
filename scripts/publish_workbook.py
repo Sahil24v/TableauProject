@@ -132,7 +132,6 @@ def getUserID(server, data):
 def add_permission(data, workbook_id, user_id):
     url = f"https://tableau.devinvh.com/api/3.17/sites/{data['site_id']}/workbooks/{workbook_id}/permissions"
 
-    # Build the request
     xml_request = ET.Element('tsRequest')
     permissions_element = ET.SubElement(xml_request, 'permissions')
     ET.SubElement(permissions_element, 'workbook', id=workbook_id)
@@ -144,7 +143,7 @@ def add_permission(data, workbook_id, user_id):
     xml_request = ET.tostring(xml_request)
 
     server_request = requests.put(
-        url, data=xml_request, auth=HTTPBasicAuth(args.username, args.password))
+        url, data=xml_request, auth= (args.username, args.password))
     _check_status(server_request, 200)
 
 

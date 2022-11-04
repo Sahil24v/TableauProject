@@ -37,12 +37,12 @@ def signin(data):
         args.username, args.password, None if data['is_site_default'] else data['site_name'])
     server = TSC.Server(data['server_url'], use_server_version=True)
     server.auth.sign_in(tableau_auth)
-    
+
     server_response = vars(server)
     auth_token = server_response.get('_auth_token')
     version = server_response.get('version')
     user_id = server_response.get('_user_id')
-    
+
     return server, auth_token, version, user_id
 
 
@@ -79,38 +79,6 @@ def publishWB(server, data):
             new_workbook)
         print(
             f"\nUpdate Workbook Successfully and set Tags.")
-
-
-def updateProjectPermissions(server, project_path):
-
-    all_projects, pagination_item = server.projects.get()
-    project = next(
-        (project for project in all_projects if project.name == project_path), None)
-    print(f"project name:{project.name} and id: {project.id}")
-
-    # Query for existing workbook default-permissions
-    server.projects.populate_workbook_default_permissions(project)
-
-    for default_permissions in project.default_workbook_permissions:
-        # Update permisssion
-        new_capabilities = {
-            TSC.Permission.Capability.AddComment: TSC.Permission.Mode.Deny,
-        }
-
-        new_rules = [TSC.PermissionsRule(
-            grantee=default_permissions.grantee, capabilities=new_capabilities)]
-
-        new_default_permissions = server.projects.update_workbook_default_permissions(
-            project, new_rules)
-
-    # Print result from adding a new default permission
-    for permission in new_default_permissions:
-        grantee = permission.grantee
-        capabilities = permission.capabilities
-        print(f"\nCapabilities for {grantee.tag_name} {grantee.id}:")
-
-        for capability in capabilities:
-            print(f"\t{capability} - {capabilities[capability]}")
 
 
 def createSchedule(server):
@@ -163,12 +131,10 @@ def main(args):
                 # publishWB(server, data)
 
                 # Step: Get the Workbook ID from the Workbook Name
-                # Sales-Dashboard ID : 70f45d7c-1e15-4864-8ca5-d51c45180f01
                 wb_id = getWBID(server, data)
-                
+
                 # Step: Update Project permissions
                 add_permission(data, wb_id[0], user_id, version, auth_token)
-                # updateProjectPermissions(server, data['project_path'])
 
                 # Step: Create New Schedule
                 # createSchedule(server)

@@ -37,6 +37,11 @@ def signin(data):
         args.username, args.password, None if data['is_site_default'] else data['site_name'])
     server = TSC.Server(data['server_url'], use_server_version=True)
     server.auth.sign_in(tableau_auth)
+    
+    parsed_response = ET.fromstring(server)
+    print('parsed_response ::', parsed_response)
+    token = parsed_response.find('t:credentials', namespaces=xmlns).get('token')
+    print('token ::', token)
     return server
 
 

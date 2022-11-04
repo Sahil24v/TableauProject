@@ -15,7 +15,7 @@
       "show_tabs": true,
       "is_wb_new": true,
       "is_site_default": true,
-      "permission_name": "Read, AddComment",
+      "permission_name": "Read",
       "permission_mode": "Deny"
     }
   ]

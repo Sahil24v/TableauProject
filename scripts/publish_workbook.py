@@ -8,7 +8,7 @@ import xml.etree.ElementTree as ET
 # permissions = {"Read", "Write", "Filter", "AddComment", "ViewComments", "ShareView", "ExportData", "ViewUnderlyingData",
 #                "ExportImage", "Delete", "ChangeHierarchy", "ChangePermissions", "WebAuthoring", "ExportXml"}
 
-
+xmlns = {'t': 'http://tableau.com/api'}
 def raiseError(e, file_path):
     print(f"{file_path} workbook is not published.")
     raise LookupError(e)

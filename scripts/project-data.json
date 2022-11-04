@@ -1,10 +1,11 @@
 {
   "workbooks": [
     {
-      "name": "Sales-Dashboard",
       "server_url": "https://tableau.devinvh.com/",
-      "site_id": "834abe2d-18ac-46d3-9346-a2f3079941d2",
       "site_name": "Enterprise",
+      "name": "Sales-Dashboard",
+      "user_name": "Nirav.Padia",
+      "site_id": "834abe2d-18ac-46d3-9346-a2f3079941d2",
       "file_path": "Sales-Dashboard.twbx",
       "project_path": "Technology",
       "tags": ["sample", "temp"],
@@ -12,7 +13,9 @@
       "description": "Sample description",
       "show_tabs": true,
       "is_wb_new": true,
-      "is_site_default": true
+      "is_site_default": true,
+      "permission_name": "Read",
+      "permission_mode": "Allow"
     }
   ]
 }

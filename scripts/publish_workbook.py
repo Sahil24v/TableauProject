@@ -35,8 +35,8 @@ def _check_status(server_response, success_code):
 def signin(data):
     tableau_auth = TSC.TableauAuth(
         args.username, args.password, None if data['is_site_default'] else data['site_name'])
-    server = TSC.Server(data['server_url'], use_server_version=True)
-    server.auth.sign_in(tableau_auth)
+    server1 = TSC.Server(data['server_url'], use_server_version=True)
+    server = server1.auth.sign_in(tableau_auth)
     
     parsed_response = ET.fromstring(server)
     print('parsed_response ::', parsed_response)
@@ -159,21 +159,21 @@ def main(args):
             # Step: Sign in to Tableau server.
             server = signin(data)
 
-            if data['project_path'] is None:
-                raise LookupError(
-                    f"The project project_path field is Null in JSON Template.", data['file_path'])
-            else:
+            # if data['project_path'] is None:
+            #     raise LookupError(
+            #         f"The project project_path field is Null in JSON Template.", data['file_path'])
+            # else:
                 # Step: Form a new workbook item and publish.
                 # publishWB(server, data)
 
                 # Step: Get the Workbook ID from the Workbook Name
                 # Sales-Dashboard ID : 70f45d7c-1e15-4864-8ca5-d51c45180f01
-                wb_id = getWBID(server, data)
+                # wb_id = getWBID(server, data)
 
                 # Step: Get the User ID from the User Name
-                user_id = getUserID(server, data)
+                # user_id = getUserID(server, data)
 
-                add_permission(data, wb_id, user_id)
+                # add_permission(data, wb_id, user_id)
                 # Step: Update Project permissions
                 # updateProjectPermissions(server, data['project_path'])
 

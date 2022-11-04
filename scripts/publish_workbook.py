@@ -143,7 +143,7 @@ def add_permission(data, workbook_id, user_id):
     xml_request = ET.tostring(xml_request)
 
     server_request = requests.put(
-        url, data=xml_request, auth= (args.username, args.password))
+        url, data=xml_request, headers={'x-tableau-auth': data['auth_token']})
     _check_status(server_request, 200)
 
 

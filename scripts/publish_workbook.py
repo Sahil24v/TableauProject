@@ -101,6 +101,7 @@ def getWBID(server, data):
 
 def getUserID(server, permission_user_name):
     all_users, pagination_item = server.users.get()
+    print([user.id for user in all_users if user.name == permission_user_name])
     for user in all_users:
         if user.name == permission_user_name:
             return user.id
@@ -172,7 +173,6 @@ def main(args):
 
                 # Step: Get the Workbook ID from the Workbook Name
                 wb_id = getWBID(server, data)
-                print("wb_id ::", wb_id)
 
                 # Step: Get the User ID of permission assigned
                 permission_user_id = getUserID(
@@ -190,12 +190,12 @@ def main(args):
                         print("In if condiiton")
                         add_permission(
                             data, wb_id[0], permission_user_id, version, auth_token, permission_name, permission_mode)
-                #     else:
-                #         update_permission = True
-                #         for permission in user_permissions:
-                #             a = permission.get('name')
-                #             b = permission.get('mode')
-                #             print(f"{a}, {b}")
+                    else:
+                        update_permission = True
+                        for permission in user_permissions:
+                            a = permission.get('name')
+                            b = permission.get('mode')
+                            print(f"{a}, {b}")
 
                 #     if permission.get('name') == permission_name and permission.get('mode') != permission_mode:
                 #         existing_mode = permission.get('mode')

@@ -183,6 +183,8 @@ def main(args):
                     if user_permissions is None:
                         add_permission(
                             data, wb_id, permission_user_id, version, auth_token, permission_name, permission_mode)
+                        print(
+                            "\tSuccessfully added permission in {wb_id}\n")
                     else:
                         update_permission = True
                         for permission in user_permissions:

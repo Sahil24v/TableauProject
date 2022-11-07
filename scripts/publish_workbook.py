@@ -171,7 +171,7 @@ def main(args):
                 user_permissions = query_permission(
                     data, wb_id[0], user_id, version, auth_token)
                 print("type of user_permissions ::", type(user_permissions))
-                print("user_permissions ::", *user_permissions)
+                print(' '.join(user_permissions))
 
                 # Step: Update Project permissions
                 # add_permission(data, wb_id[0], user_id, version, auth_token)

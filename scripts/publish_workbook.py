@@ -185,6 +185,7 @@ def main(args):
 
                 count = 0
                 update_permission = True
+                
                 for permission_name, permission_mode in data['permissions']['permission_template'].items():
                     count = count + 1
                     if user_permissions is None:

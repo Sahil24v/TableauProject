@@ -170,6 +170,7 @@ def main(args):
                 # get permissions of specific workbook
                 user_permissions = query_permission(
                     data, wb_id[0], user_id, version, auth_token)
+                    
                 print("type of user_permissions ::", type(user_permissions))
                 print(' '.join(user_permissions))
 

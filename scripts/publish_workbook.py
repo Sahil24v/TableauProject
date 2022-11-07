@@ -98,6 +98,10 @@ def getWBID(server, data):
     return [workbook.id for workbook in all_workbooks_items if workbook.name == data['name']]
 
 
+def _encode_for_display(text):
+    return text.encode('ascii', errors="backslashreplace").decode('utf-8')
+
+
 def query_permission(data, wb_id, user_id, version, auth_token):
     url = f"https://tableau.devinvh.com/api/{version}/sites/{data['site_id']}/workbooks/{wb_id}/permissions"
 
@@ -166,7 +170,8 @@ def main(args):
                 wb_id = getWBID(server, data)
 
                 # get permissions of specific workbook
-                user_permissions = query_permission(data, wb_id[0], user_id, version, auth_token)
+                user_permissions = query_permission(
+                    data, wb_id[0], user_id, version, auth_token)
                 print(type(user_permissions))
                 print(user_permissions)
 

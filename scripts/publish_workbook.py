@@ -179,28 +179,34 @@ def main(args):
                     data, wb_id[0], permission_user_id, version, auth_token)
 
                 for key, value in data['permissions']['permission_template'].items():
-                    print(f"Key: {key}, Value: {value}")
+                    permission_name = key
+                    permission_mode = value
 
-                # if user_permissions is None:
-                #     add_permission(
-                #         data, wb_id[0], permission_user_id, version, auth_token, permission_name, permission_mode)
-                # else:
-                #     update_permission = True
-                #     for permission in user_permissions:
-                #         if permission.get('name') == permission_name and permission.get('mode') != permission_mode:
-                #             existing_mode = permission.get('mode')
-                #             delete_permission(
-                #                 data, auth_token, wb_id[0], user_id, permission_name, existing_mode)
-                #         else:
-                #             update_permission = False
-                #     if update_permission:
-                #         add_permission(
-                #             data, wb_id[0], user_id, version, auth_token, permission_name, permission_mode)
-                #         print(
-                #             "\tSuccessfully added/updated permission in {wb_id[0]}\n")
-                #     else:
-                #         print(
-                #             "\tPermission already set to {permission_mode} on {workbook_name}\n")
+                    if user_permissions is None:
+                        add_permission(
+                            data, wb_id[0], permission_user_id, version, auth_token, permission_name, permission_mode)
+                    else:
+                        update_permission = True
+                        for permission in user_permissions:
+                            a = permission.get('name')
+                            b = permission.get('mode')
+                            print(f"{a}, {b}")
+
+                        #     if permission.get('name') == permission_name and permission.get('mode') != permission_mode:
+                        #         existing_mode = permission.get('mode')
+                        #         delete_permission(
+                        #             data, auth_token, wb_id[0], user_id, permission_name, existing_mode)
+                        #     else:
+                        #         update_permission = False
+
+                        # if update_permission:
+                        #     add_permission(
+                        #         data, wb_id[0], user_id, version, auth_token, permission_name, permission_mode)
+                        #     print(
+                        #         "\tSuccessfully added/updated permission in {wb_id[0]}\n")
+                        # else:
+                        #     print(
+                        #         "\tPermission already set to {permission_mode} on {workbook_name}\n")
 
                 # Step: Update Project permissions
                 # add_permission(data, wb_id[0], user_id, version, auth_token)

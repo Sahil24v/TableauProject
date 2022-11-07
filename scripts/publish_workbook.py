@@ -105,21 +105,21 @@ def _encode_for_display(text):
 def query_permission(data, wb_id, user_id, version, auth_token):
     url = f"https://tableau.devinvh.com/api/{version}/sites/{data['site_id']}/workbooks/{wb_id}/permissions"
 
-    print(url)
     server_response = requests.get(url, headers={'x-tableau-auth': auth_token})
     _check_status(server_response, 200)
     server_response = _encode_for_display(server_response.text)
 
     # Reads and parses the response
     parsed_response = ET.fromstring(server_response)
-    print("parsed_response ::", parsed_response)
 
     # Find all the capabilities for a specific user
     capabilities = parsed_response.findall(
         './/t:granteeCapabilities', namespaces=xmlns)
     for capability in capabilities:
+        print(capabilitiy)
         user = capability.find('.//t:user', namespaces=xmlns)
         if user is not None and user.get('id') == user_id:
+            print(capability.findall('.//t:capability', namespaces=xmlns))
             return capability.findall('.//t:capability', namespaces=xmlns)
 
 

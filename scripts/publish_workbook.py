@@ -170,13 +170,16 @@ def main(args):
 
                 # Step: Get the Workbook ID from the Workbook Name
                 wb_id = getWBID(server, data)
+                print("wb_id ::", wb_id)
 
                 # Step: Get the User ID of permission assigned
                 permission_user_id = getUserID(server, data['permissions']['permission_user_name'])
+                print("permission_user_id ::", permission_user_id)
 
                 # get permissions of specific workbook
                 user_permissions = query_permission(
                     data, wb_id[0], permission_user_id, version, auth_token)
+                print("Query permission over.")
 
                 for key, value in data['permissions']['permission_template'].items():
                     permission_name = key

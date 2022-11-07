@@ -109,6 +109,7 @@ def _encode_for_display(text):
 
 
 def query_permission(data, wb_id, user_id, version, auth_token):
+    print("In query_permission Function.")
     url = f"https://tableau.devinvh.com/api/{version}/sites/{data['site_id']}/workbooks/{wb_id}/permissions"
 
     server_response = requests.get(url, headers={'x-tableau-auth': auth_token})
@@ -126,6 +127,7 @@ def query_permission(data, wb_id, user_id, version, auth_token):
 
 
 def add_permission(data, wb_id, user_id, version, auth_token, permission_name, permission_mode):
+    print("In add_permission Function.")
     url = f"https://tableau.devinvh.com/api/{version}/sites/{data['site_id']}/workbooks/{wb_id}/permissions"
 
     xml_request = ET.Element('tsRequest')
@@ -144,6 +146,7 @@ def add_permission(data, wb_id, user_id, version, auth_token, permission_name, p
 
 
 def delete_permission(data, auth_token, wb_id, user_id, permission_name, existing_mode):
+    print("Over delete_permission Function.")
     url = f"https://tableau.devinvh.com/api/{version}/sites/{data['site_id']}/workbooks/{wb_id}/permissions/users/{user_id}/{permission_name}/{existing_mode}"
 
     print("\tDeleting existing permission")
@@ -178,11 +181,13 @@ def main(args):
                 # get permissions of specific workbook
                 user_permissions = query_permission(
                     data, wb_id, permission_user_id, version, auth_token)
+                print("Over query_permission Function.")
 
                 for permission_name, permission_mode in data['permissions']['permission_template'].items():
                     if user_permissions is None:
                         add_permission(
                             data, wb_id, permission_user_id, version, auth_token, permission_name, permission_mode)
+                        print("Over add_permission Function.")
                         print(
                             "\tSuccessfully added permission in {wb_id}\n")
                     else:
@@ -192,12 +197,14 @@ def main(args):
                                 existing_mode = permission.get('mode')
                                 delete_permission(
                                     data, auth_token, wb_id, user_id, permission_name, existing_mode)
+                                print("Over delete_permission Function.")
                             else:
                                 update_permission = False
 
                     if update_permission:
                         add_permission(
                             data, wb_id, user_id, version, auth_token, permission_name, permission_mode)
+                        print("Over add_permission Function.")
                         print(
                             "\tSuccessfully added/updated permission in {wb_id}\n")
                     else:

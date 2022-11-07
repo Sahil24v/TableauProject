@@ -184,6 +184,7 @@ def main(args):
                 print("Over query_permission Function.")
 
                 count = 0
+                update_permission = True
                 for permission_name, permission_mode in data['permissions']['permission_template'].items():
                     count = count + 1
                     if user_permissions is None:
@@ -194,7 +195,6 @@ def main(args):
                         print(
                             f"\tPermission {permission_name} is set to {permission_mode} Successfully in {wb_id}\n")
                     else:
-                        update_permission = True
                         for permission in user_permissions:
                             if permission.get('name') == permission_name and permission.get('mode') != permission_mode:
                                 existing_mode = permission.get('mode')

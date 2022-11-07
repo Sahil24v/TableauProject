@@ -116,7 +116,7 @@ def query_permission(data, wb_id, user_id, version, auth_token):
     capabilities = parsed_response.findall(
         './/t:granteeCapabilities', namespaces=xmlns)
     for capability in capabilities:
-        print(capabilitiy)
+        print(capability)
         user = capability.find('.//t:user', namespaces=xmlns)
         if user is not None and user.get('id') == user_id:
             print(capability.findall('.//t:capability', namespaces=xmlns))

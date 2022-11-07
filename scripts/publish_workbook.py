@@ -169,49 +169,41 @@ def main(args):
                 # publishWB(server, data)
 
                 # Step: Get the Workbook ID from the Workbook Name
-                wb_id = getWBID(server, data)
+                wb_id = getWBID(server, data)[0]
 
                 # Step: Get the User ID of permission assigned
                 permission_user_id = getUserID(
                     server, data['permissions']['permission_user_name'])[0]
-                print("permission_user_id", permission_user_id)
 
                 # get permissions of specific workbook
                 user_permissions = query_permission(
-                    data, wb_id[0], permission_user_id, version, auth_token)
+                    data, wb_id, permission_user_id, version, auth_token)
 
-                for key, value in data['permissions']['permission_template'].items():
-                    permission_name = key
-                    permission_mode = value
-
+                for permission_name, permission_mode in data['permissions']['permission_template'].items():
                     if user_permissions is None:
-                        print("In if condiiton")
                         add_permission(
-                            data, wb_id[0], permission_user_id, version, auth_token, permission_name, permission_mode)
+                            data, wb_id, permission_user_id, version, auth_token, permission_name, permission_mode)
                     else:
                         update_permission = True
                         for permission in user_permissions:
-                            a = permission.get('name')
-                            b = permission.get('mode')
+                            if permission.get('name') == permission_name and permission.get('mode') != permission_mode:
+                                existing_mode = permission.get('mode')
+                                delete_permission(
+                                    data, auth_token, wb_id, user_id, permission_name, existing_mode)
+                            else:
+                                update_permission = False
 
-                #     if permission.get('name') == permission_name and permission.get('mode') != permission_mode:
-                #         existing_mode = permission.get('mode')
-                #         delete_permission(
-                #             data, auth_token, wb_id[0], user_id, permission_name, existing_mode)
-                #     else:
-                #         update_permission = False
-
-                # if update_permission:
-                #     add_permission(
-                #         data, wb_id[0], user_id, version, auth_token, permission_name, permission_mode)
-                #     print(
-                #         "\tSuccessfully added/updated permission in {wb_id[0]}\n")
-                # else:
-                #     print(
-                #         "\tPermission already set to {permission_mode} on {workbook_name}\n")
+                    if update_permission:
+                        add_permission(
+                            data, wb_id, user_id, version, auth_token, permission_name, permission_mode)
+                        print(
+                            "\tSuccessfully added/updated permission in {wb_id}\n")
+                    else:
+                        print(
+                            "\tPermission already set to {permission_mode} on {workbook_name}\n")
 
                 # Step: Update Project permissions
-                # add_permission(data, wb_id[0], user_id, version, auth_token)
+                # add_permission(data, wb_id, user_id, version, auth_token)
 
                 # Step: Create New Schedule
                 # createSchedule(server)

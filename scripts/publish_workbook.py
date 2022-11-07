@@ -101,10 +101,7 @@ def getWBID(server, data):
 
 def getUserID(server, permission_user_name):
     all_users, pagination_item = server.users.get()
-    print(user.id for user in all_users if user.name == permission_user_name)
-    for user in all_users:
-        if user.name == permission_user_name:
-            return user.id
+    return [user.id for user in all_users if user.name == permission_user_name]
 
 
 def _encode_for_display(text):
@@ -176,7 +173,8 @@ def main(args):
 
                 # Step: Get the User ID of permission assigned
                 permission_user_id = getUserID(
-                    server, data['permissions']['permission_user_name'])
+                    server, data['permissions']['permission_user_name'])[0]
+                print("permission_user_id", permission_user_id)
 
                 # get permissions of specific workbook
                 user_permissions = query_permission(
@@ -195,7 +193,6 @@ def main(args):
                         for permission in user_permissions:
                             a = permission.get('name')
                             b = permission.get('mode')
-                            print(f"{a}, {b}")
 
                 #     if permission.get('name') == permission_name and permission.get('mode') != permission_mode:
                 #         existing_mode = permission.get('mode')

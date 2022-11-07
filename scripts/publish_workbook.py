@@ -178,26 +178,26 @@ def main(args):
                 print("permission_user_id ::", type(permission_user_id))
 
                 # get permissions of specific workbook
-                user_permissions = query_permission(
-                    data, wb_id[0], permission_user_id, version, auth_token)
-                print("Query permission over.")
+                # user_permissions = query_permission(
+                #     data, wb_id[0], permission_user_id, version, auth_token)
+                # print("Query permission over.")
 
-                for key, value in data['permissions']['permission_template'].items():
-                    permission_name = key
-                    permission_mode = value
+                # for key, value in data['permissions']['permission_template'].items():
+                #     permission_name = key
+                #     permission_mode = value
 
-                    print("user_permissions is None ::",
-                          user_permissions is None)
-                    if user_permissions is None:
-                        print("In if condiiton")
-                        add_permission(
-                            data, wb_id[0], permission_user_id[0], version, auth_token, permission_name, permission_mode)
-                    else:
-                        update_permission = True
-                        for permission in user_permissions:
-                            a = permission.get('name')
-                            b = permission.get('mode')
-                            print(f"{a}, {b}")
+                #     print("user_permissions is None ::",
+                #           user_permissions is None)
+                #     if user_permissions is None:
+                #         print("In if condiiton")
+                #         add_permission(
+                #             data, wb_id[0], permission_user_id[0], version, auth_token, permission_name, permission_mode)
+                #     else:
+                #         update_permission = True
+                #         for permission in user_permissions:
+                #             a = permission.get('name')
+                #             b = permission.get('mode')
+                #             print(f"{a}, {b}")
 
                         #     if permission.get('name') == permission_name and permission.get('mode') != permission_mode:
                         #         existing_mode = permission.get('mode')

@@ -211,7 +211,7 @@ def main(args):
                             f"\tSuccessfully added/updated permission in {wb_id}\n")
                     else:
                         print(
-                            f"\tPermission already set to {permission_mode} on {workbook_name}\n")
+                            f"\tPermission already set to {permission_mode} on {data['name']}\n")
 
                 # Step: Update Project permissions
                 # add_permission(data, wb_id, user_id, version, auth_token)

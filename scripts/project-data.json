@@ -15,8 +15,10 @@
       "permissions": {
         "permission_user_name": "Nirav.Padia",
         "permission_template": {
-          "Read": "Allow",
-          "AddComment": "Allow"
+          "Write": "Allow",
+          "ViewComments": "Allow",
+          "Delete": "Allow",
+          "ExportXml": "Allow"
         }
       }
     }

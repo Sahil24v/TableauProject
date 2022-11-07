@@ -183,14 +183,16 @@ def main(args):
                     data, wb_id, permission_user_id, version, auth_token)
                 print("Over query_permission Function.")
 
+                count = 0
                 for permission_name, permission_mode in data['permissions']['permission_template'].items():
+                    count = count + 1
                     if user_permissions is None:
                         print("In 1nd if condition")
                         add_permission(
                             data, wb_id, permission_user_id, version, auth_token, permission_name, permission_mode)
                         print("Over add_permission Function.")
                         print(
-                            f"\tSuccessfully added permission in {wb_id}\n")
+                            f"\tPermission {permission_name} is set to {permission_mode} Successfully in {wb_id}\n")
                     else:
                         update_permission = True
                         for permission in user_permissions:
@@ -198,6 +200,8 @@ def main(args):
                                 existing_mode = permission.get('mode')
                                 delete_permission(
                                     data, auth_token, wb_id, user_id, permission_name, existing_mode, version)
+                                print(
+                            f"\tPermission {permission_name} : {existing_mode} is deleted Successfully in {wb_id}\n")
                                 print("Over delete_permission Function.")
                             else:
                                 update_permission = False
@@ -208,11 +212,12 @@ def main(args):
                             data, wb_id, user_id, version, auth_token, permission_name, permission_mode)
                         print("Over add_permission Function.")
                         print(
-                            f"\tSuccessfully added/updated permission in {wb_id}\n")
+                            f"\tPermission {permission_name} is set to {permission_mode} Successfully in {wb_id}\n")
                     else:
                         print(
-                            f"\tPermission already set to {permission_mode} on {data['name']}\n")
+                            f"\tPermission {permission_name} is already set to {permission_mode} on {data['name']}\n")
 
+                print(count)
                 # Step: Update Project permissions
                 # add_permission(data, wb_id, user_id, version, auth_token)
 

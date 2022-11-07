@@ -145,8 +145,8 @@ def add_permission(data, wb_id, user_id, version, auth_token, permission_name, p
     _check_status(server_request, 200)
 
 
-def delete_permission(data, auth_token, wb_id, user_id, permission_name, existing_mode):
-    print("Over delete_permission Function.")
+def delete_permission(data, auth_token, wb_id, user_id, permission_name, existing_mode, version):
+    print("In delete_permission Function.")
     url = f"https://tableau.devinvh.com/api/{version}/sites/{data['site_id']}/workbooks/{wb_id}/permissions/users/{user_id}/{permission_name}/{existing_mode}"
 
     print("\tDeleting existing permission")
@@ -185,31 +185,33 @@ def main(args):
 
                 for permission_name, permission_mode in data['permissions']['permission_template'].items():
                     if user_permissions is None:
+                        print("In 1nd if condition")
                         add_permission(
                             data, wb_id, permission_user_id, version, auth_token, permission_name, permission_mode)
                         print("Over add_permission Function.")
                         print(
-                            "\tSuccessfully added permission in {wb_id}\n")
+                            f"\tSuccessfully added permission in {wb_id}\n")
                     else:
                         update_permission = True
                         for permission in user_permissions:
                             if permission.get('name') == permission_name and permission.get('mode') != permission_mode:
                                 existing_mode = permission.get('mode')
                                 delete_permission(
-                                    data, auth_token, wb_id, user_id, permission_name, existing_mode)
+                                    data, auth_token, wb_id, user_id, permission_name, existing_mode, version)
                                 print("Over delete_permission Function.")
                             else:
                                 update_permission = False
 
                     if update_permission:
+                        print("In 2nd if condition")
                         add_permission(
                             data, wb_id, user_id, version, auth_token, permission_name, permission_mode)
                         print("Over add_permission Function.")
                         print(
-                            "\tSuccessfully added/updated permission in {wb_id}\n")
+                            f"\tSuccessfully added/updated permission in {wb_id}\n")
                     else:
                         print(
-                            "\tPermission already set to {permission_mode} on {workbook_name}\n")
+                            f"\tPermission already set to {permission_mode} on {workbook_name}\n")
 
                 # Step: Update Project permissions
                 # add_permission(data, wb_id, user_id, version, auth_token)
@@ -221,7 +223,7 @@ def main(args):
             server.auth.sign_out()
 
     except Exception as e:
-        print("Something went wrong, Error occured.\n", e)
+        print(f"Something went wrong, Error occured.\n", e)
         exit(1)
 
 

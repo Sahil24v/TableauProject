@@ -101,7 +101,7 @@ def getWBID(server, data):
 
 def getUserID(server, permission_user_name):
     all_users, pagination_item = server.users.get()
-    print([user.id for user in all_users if user.name == permission_user_name])
+    print(user.id for user in all_users if user.name == permission_user_name)
     for user in all_users:
         if user.name == permission_user_name:
             return user.id

@@ -4,18 +4,21 @@
       "server_url": "https://tableau.devinvh.com/",
       "site_name": "Enterprise",
       "name": "Sales-Dashboard",
-      "user_name": "Nirav.Padia",
       "site_id": "834abe2d-18ac-46d3-9346-a2f3079941d2",
       "file_path": "Sales-Dashboard.twbx",
       "project_path": "Technology",
       "tags": ["sample", "temp"],
       "hidden_views": ["Growth Rates"],
-      "description": "Sample description",
       "show_tabs": true,
       "is_wb_new": true,
       "is_site_default": true,
-      "permission_name": "Read",
-      "permission_mode": "Allow"
+      "permissions": {
+        "userName": "Nirav.Padia",
+        "permission_template": {
+          "Read": "Allow",
+          "AddComment": "Deny"
+        }
+      }
     }
   ]
 }

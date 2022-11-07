@@ -98,6 +98,25 @@ def getWBID(server, data):
     return [workbook.id for workbook in all_workbooks_items if workbook.name == data['name']]
 
 
+def query_permission(data, wb_id, user_id, version, auth_token):
+    url = f"https://tableau.devinvh.com/api/{version}/sites/{data['site_id']}/workbooks/{wb_id}/permissions"
+
+    server_response = requests.get(url, headers={'x-tableau-auth': auth_token})
+    _check_status(server_response, 200)
+    server_response = _encode_for_display(server_response.text)
+
+    # Reads and parses the response
+    parsed_response = ET.fromstring(server_response)
+
+    # Find all the capabilities for a specific user
+    capabilities = parsed_response.findall(
+        './/t:granteeCapabilities', namespaces=xmlns)
+    for capability in capabilities:
+        user = capability.find('.//t:user', namespaces=xmlns)
+        if user is not None and user.get('id') == user_id:
+            return capability.findall('.//t:capability', namespaces=xmlns)
+
+
 def add_permission(data, wb_id, user_id, version, auth_token):
     url = f"https://tableau.devinvh.com/api/{version}/sites/{data['site_id']}/workbooks/{wb_id}/permissions"
 
@@ -114,6 +133,17 @@ def add_permission(data, wb_id, user_id, version, auth_token):
     server_request = requests.put(
         url, data=xml_request,  headers={'x-tableau-auth': auth_token})
     _check_status(server_request, 200)
+
+
+def delete_permission(data, auth_token, wb_id, user_id, permission_name, existing_mode):
+    url = f"https://tableau.devinvh.com/api/{version}/sites/{data['site_id']}/workbooks/{wb_id}/permissions/users/{user_id}/{permission_name}/{existing_mode}"
+
+    print("\tDeleting existing permission")
+
+    server_response = requests.delete(
+        url, headers={'x-tableau-auth': auth_token})
+    _check_status(server_response, 204)
+    return
 
 
 def main(args):
@@ -133,8 +163,13 @@ def main(args):
                 # Step: Get the Workbook ID from the Workbook Name
                 wb_id = getWBID(server, data)
 
+                # get permissions of specific workbook
+                user_permissions = query_permission(data, wb_id[0], user_id, version, auth_token)
+                print(type(user_permissions))
+                print(user_permissions)
+
                 # Step: Update Project permissions
-                add_permission(data, wb_id[0], user_id, version, auth_token)
+                # add_permission(data, wb_id[0], user_id, version, auth_token)
 
                 # Step: Create New Schedule
                 # createSchedule(server)

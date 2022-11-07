@@ -8,7 +8,6 @@ from requests.auth import HTTPBasicAuth
 from pprint import pprint
 
 
-
 xmlns = {'t': 'http://tableau.com/api'}
 
 
@@ -100,6 +99,11 @@ def getWBID(server, data):
     return [workbook.id for workbook in all_workbooks_items if workbook.name == data['name']]
 
 
+def getUserID(server, permission_user_id):
+    all_users, pagination_item = server.users.get()
+    return [user.id for user in all_users if user.name == permission_user_id]
+
+
 def _encode_for_display(text):
     return text.encode('ascii', errors="backslashreplace").decode('utf-8')
 
@@ -111,10 +115,8 @@ def query_permission(data, wb_id, user_id, version, auth_token):
     _check_status(server_response, 200)
     server_response = _encode_for_display(server_response.text)
 
-    # Reads and parses the response
     parsed_response = ET.fromstring(server_response)
 
-    # Find all the capabilities for a specific user
     capabilities = parsed_response.findall(
         './/t:granteeCapabilities', namespaces=xmlns)
     for capability in capabilities:
@@ -123,7 +125,7 @@ def query_permission(data, wb_id, user_id, version, auth_token):
             return capability.findall('.//t:capability', namespaces=xmlns)
 
 
-def add_permission(data, wb_id, user_id, version, auth_token):
+def add_permission(data, wb_id, user_id, version, auth_token, permission_name, permission_mode):
     url = f"https://tableau.devinvh.com/api/{version}/sites/{data['site_id']}/workbooks/{wb_id}/permissions"
 
     xml_request = ET.Element('tsRequest')
@@ -133,7 +135,7 @@ def add_permission(data, wb_id, user_id, version, auth_token):
     ET.SubElement(grantee_element, 'user', id=user_id)
     capabilities_element = ET.SubElement(grantee_element, 'capabilities')
     ET.SubElement(capabilities_element, 'capability',
-                  name=data['permission_name'], mode=data['permission_mode'])
+                  name=permission_name, mode=permission_mode)
     xml_request = ET.tostring(xml_request)
 
     server_request = requests.put(
@@ -169,13 +171,36 @@ def main(args):
                 # Step: Get the Workbook ID from the Workbook Name
                 wb_id = getWBID(server, data)
 
+                # Step: Get the User ID of permission assigned
+                permission_user_id = getUserID(server, data['permissions']['permission_user_name'])
+
                 # get permissions of specific workbook
                 user_permissions = query_permission(
-                    data, wb_id[0], user_id, version, auth_token)
+                    data, wb_id[0], permission_user_id, version, auth_token)
 
-                print("type of user_permissions ::", type(user_permissions))
-                for i in user_permissions:
-                    print(i.attrib)
+                for key, value in data['permissions']['permission_template'].items():
+                    print(f"Key: {key}, Value: {value}")
+
+                # if user_permissions is None:
+                #     add_permission(
+                #         data, wb_id[0], permission_user_id, version, auth_token, permission_name, permission_mode)
+                # else:
+                #     update_permission = True
+                #     for permission in user_permissions:
+                #         if permission.get('name') == permission_name and permission.get('mode') != permission_mode:
+                #             existing_mode = permission.get('mode')
+                #             delete_permission(
+                #                 data, auth_token, wb_id[0], user_id, permission_name, existing_mode)
+                #         else:
+                #             update_permission = False
+                #     if update_permission:
+                #         add_permission(
+                #             data, wb_id[0], user_id, version, auth_token, permission_name, permission_mode)
+                #         print(
+                #             "\tSuccessfully added/updated permission in {wb_id[0]}\n")
+                #     else:
+                #         print(
+                #             "\tPermission already set to {permission_mode} on {workbook_name}\n")
 
                 # Step: Update Project permissions
                 # add_permission(data, wb_id[0], user_id, version, auth_token)

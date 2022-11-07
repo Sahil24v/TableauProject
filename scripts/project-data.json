@@ -13,7 +13,7 @@
       "is_wb_new": true,
       "is_site_default": true,
       "permissions": {
-        "userName": "Nirav.Padia",
+        "permission_user_name": "Nirav.Padia",
         "permission_template": {
           "Read": "Allow",
           "AddComment": "Deny"

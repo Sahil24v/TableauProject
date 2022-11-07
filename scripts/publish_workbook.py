@@ -116,10 +116,8 @@ def query_permission(data, wb_id, user_id, version, auth_token):
     capabilities = parsed_response.findall(
         './/t:granteeCapabilities', namespaces=xmlns)
     for capability in capabilities:
-        print(capability)
         user = capability.find('.//t:user', namespaces=xmlns)
         if user is not None and user.get('id') == user_id:
-            print(capability.findall('.//t:capability', namespaces=xmlns))
             return capability.findall('.//t:capability', namespaces=xmlns)
 
 
@@ -172,8 +170,8 @@ def main(args):
                 # get permissions of specific workbook
                 user_permissions = query_permission(
                     data, wb_id[0], user_id, version, auth_token)
-                print(type(user_permissions))
-                print(user_permissions)
+                print("type of user_permissions ::", type(user_permissions))
+                print("user_permissions ::", user_permissions)
 
                 # Step: Update Project permissions
                 # add_permission(data, wb_id[0], user_id, version, auth_token)

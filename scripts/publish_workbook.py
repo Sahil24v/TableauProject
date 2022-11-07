@@ -174,7 +174,8 @@ def main(args):
                     data, wb_id[0], user_id, version, auth_token)
 
                 print("type of user_permissions ::", type(user_permissions))
-                pprint(vars(user_permissions))
+                for i in user_permissions:
+                    print(i)
 
                 # Step: Update Project permissions
                 # add_permission(data, wb_id[0], user_id, version, auth_token)

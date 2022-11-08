@@ -13,13 +13,6 @@ import tableauserverclient as TSC
 xmlns = {'t': 'http://tableau.com/api'}
 
 
-class ApiCallError(Exception):
-    """
-    Class Description
-    """
-    pass
-
-
 def _check_status(server_response, success_code):
     if server_response.status_code != success_code:
         parsed_response = ET.fromstring(server_response.text)
@@ -34,7 +27,7 @@ def _check_status(server_response, success_code):
         summary = summary_element.text if summary_element is not None else 'unknown summary'
         detail = detail_element.text if detail_element is not None else 'unknown detail'
         error_message = f'{code}: {summary} - {detail}'
-        raise ApiCallError(error_message)
+        raise LookupError(error_message)
     return
 
 
@@ -177,11 +170,11 @@ def delete_permission(data, auth_token, wb_id, user_id, permission_name, existin
     return
 
 
-def main(args):
+def main(arguments):
     """
     Funcrion Description
     """
-    project_data_json = json.loads(args.project_data)
+    project_data_json = json.loads(arguments.project_data)
     try:
         for data in project_data_json:
             # Step: Sign in to Tableau server.
@@ -233,7 +226,7 @@ def main(args):
                                     update_permission_flag = True
                                     print(
                                         f"\tPermission {permission_name} : {existing_mode} \
-                                        is deleted Successfully in {wb_id}\n"
+                                            is deleted Successfully in {wb_id}\n"
                                     )
                                 else:
                                     update_permission_flag = False
@@ -276,5 +269,5 @@ if __name__ == '__main__':
     parser.add_argument('--project_data', action='store',
                         type=str, required=True)
 
-    args = parser.parse_args()
+    args = parser.parse_arguments()
     main(args)

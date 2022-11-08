@@ -115,9 +115,8 @@ def query_permission(data, wb_id, user_id, version, auth_token):
     """
     Funcrion Description
     """
-    url = data['server_url'] + \
-        f"api/{version}/sites/{data['site_id']}/workbooks/{wb_id}/permissions"
-    print(url)
+    url = f"https://tableau.devinvh.com/api/{version}/sites/{data['site_id']}/workbooks/{wb_id}/permissions"
+
     server_response = requests.get(
         url, headers={'x-tableau-auth': auth_token}, timeout=5000)
     _check_status(server_response, 200)

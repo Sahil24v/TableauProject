@@ -200,7 +200,6 @@ def main(args):
                 # get permissions of specific workbook
                 user_permissions = query_permission(
                     data, wb_id, permission_user_id, version, auth_token)
-                print("Over query_permission Function.")
 
                 for permission_name, permission_mode in data['permissions']['permission_template'].items():
                     update_permission = True
@@ -215,7 +214,8 @@ def main(args):
                         for permission in user_permissions:
                             if permission.get('name') == permission_name:
                                 if permission.get('mode') != permission_mode:
-                                    print(f"Permission Name :{permission.get('name')}, Permission Mode :{permission.get('mode')}")
+                                    print(
+                                        f"Permission Name :{permission.get('name')}, Permission Mode :{permission.get('mode')}")
                                     existing_mode = permission.get('mode')
                                     delete_permission(
                                         data, auth_token, wb_id, user_id, permission_name, existing_mode, version)
@@ -225,7 +225,7 @@ def main(args):
                                 else:
                                     update_permission = False
                     print("update_permission Value ::", update_permission)
-                    
+
                     if update_permission:
                         print("In 2nd if condition")
                         add_permission(

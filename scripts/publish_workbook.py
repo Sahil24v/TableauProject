@@ -208,28 +208,28 @@ def main(args):
                         print("In 1nd if condition")
                         add_permission(
                             data, wb_id, permission_user_id, version, auth_token, permission_name, permission_mode)
-                        print("Over add_permission Function.")
                         print(
                             f"\tPermission {permission_name} is set to {permission_mode} Successfully in {wb_id}\n")
                         update_permission = False
                     else:
                         for permission in user_permissions:
-                            if permission.get('name') == permission_name and permission.get('mode') != permission_mode:
-                                existing_mode = permission.get('mode')
-                                delete_permission(
-                                    data, auth_token, wb_id, user_id, permission_name, existing_mode, version)
-                                update_permission = True
-                                print(
-                                    f"\tPermission {permission_name} : {existing_mode} is deleted Successfully in {wb_id}\n")
-                                print("Over delete_permission Function.")
-                            else:
-                                update_permission = False
-
+                            if permission.get('name') == permission_name:
+                                if permission.get('mode') != permission_mode:
+                                    print(f"Permission Name :{permission.get('name')}, Permission Mode :{permission.get('mode')}")
+                                    existing_mode = permission.get('mode')
+                                    delete_permission(
+                                        data, auth_token, wb_id, user_id, permission_name, existing_mode, version)
+                                    update_permission = True
+                                    print(
+                                        f"\tPermission {permission_name} : {existing_mode} is deleted Successfully in {wb_id}\n")
+                                else:
+                                    update_permission = False
+                    print("update_permission Value ::", update_permission)
+                    
                     if update_permission:
                         print("In 2nd if condition")
                         add_permission(
                             data, wb_id, user_id, version, auth_token, permission_name, permission_mode)
-                        print("Over add_permission Function.")
                         print(
                             f"\tPermission {permission_name} is set to {permission_mode} Successfully in {wb_id}\n")
                     else:

@@ -15,20 +15,22 @@
       "permissions": {
         "permission_user_name": "Nirav.Padia",
         "permission_template": {
-          "Read": "Allow",
-          "Write": "Allow",
-          "Filter": "Allow",
-          "AddComment": "Allow",
-          "ViewComments": "Allow",
-          "ShareView": "Allow",
-          "ExportData": "Allow",
-          "ViewUnderlyingData": "Allow",
-          "ExportImage": "Allow",
-          "Delete": "Allow",
-          "ChangeHierarchy": "Allow",
-          "ChangePermissions": "Allow",
-          "WebAuthoring": "Allow",
-          "ExportXml": "Allow"
+          "Read": "Deny",
+          "Write": "Deny",
+          "Filter": "Deny",
+          "AddComment": "Deny",
+          "ViewComments": "Deny",
+          "ShareView": "Deny",
+          "ExportData": "Deny",
+          "ViewUnderlyingData": "Deny",
+          "ExportImage": "Deny",
+          "Delete": "Deny",
+          "ChangeHierarchy": "Deny",
+          "ChangePermissions": "Deny",
+          "WebAuthoring": "Deny",
+          "ExportXml": "Deny",
+          "RunExplainData": "Deny",
+          "CreateRefreshMetrics": "Deny"
         }
       }
     }

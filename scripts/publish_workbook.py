@@ -183,14 +183,14 @@ def main(arguments):
                 user_permissions = query_permission(
                     data, wb_id, permission_user_id, version, auth_token)
                 for permission_name, permission_mode in data['permissions']['permission_template'].items():
-                    update_permission = True
+                    update_permission_flag = True
                     if user_permissions is None:
                         print("In 1nd if condition")
                         add_permission(
                             data, wb_id, permission_user_id, version, auth_token, permission_name, permission_mode)
                         print(
                             f"\tPermission {permission_name} is set to {permission_mode} Successfully in {wb_id}\n")
-                        update_permission = False
+                        update_permission_flag = False
                     else:
                         for permission in user_permissions:
                             if permission.get('name') == permission_name:
@@ -200,13 +200,13 @@ def main(arguments):
                                     existing_mode = permission.get('mode')
                                     delete_permission(
                                         data, auth_token, wb_id, user_id, permission_name, existing_mode, version)
-                                    update_permission = True
+                                    update_permission_flag = True
                                     print(
                                         f"\tPermission {permission_name} : {existing_mode} is deleted Successfully in {wb_id}\n")
                                 else:
-                                    update_permission = False
-                    print("update_permission Value ::", update_permission)
-                    if update_permission:
+                                    update_permission_flag = False
+
+                    if update_permission_flag:
                         print("In 2nd if condition")
                         add_permission(
                             data, wb_id, user_id, version, auth_token, permission_name, permission_mode)
@@ -219,6 +219,7 @@ def main(arguments):
                 # add_permission(data, wb_id, user_id, version, auth_token)
             # Step: Sign Out to the Tableau Server
             server.auth.sign_out()
+            
     except Exception as tableu_exception:
         logging.error(
             "Something went wrong, Error occured.\n %s", tableu_exception)

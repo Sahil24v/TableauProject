@@ -17,7 +17,7 @@
         "permission_template": {
           "Read": "Allow",
           "Write": "Allow",
-          "Filter": "Deny",
+          "Filter": "Allow",
           "AddComment": "Deny",
           "ViewComments": "Deny",
           "ShareView": "Deny",

@@ -15,9 +15,9 @@
       "permissions": {
         "permission_user_name": "Nirav.Padia",
         "permission_template": {
-          "Write": "Allow",
+          "Write": "Deny",
           "ViewComments": "Allow",
-          "Delete": "Allow",
+          "Delete": "Deny",
           "ExportXml": "Allow"
         }
       }

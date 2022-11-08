@@ -4,14 +4,15 @@ import argparse
 import tableauserverclient as TSC
 import requests
 import xml.etree.ElementTree as ET
-from requests.auth import HTTPBasicAuth
-from pprint import pprint
 
 
 xmlns = {'t': 'http://tableau.com/api'}
 
 
 class ApiCallError(Exception):
+    """
+    Class Description
+    """
     pass
 
 
@@ -33,7 +34,14 @@ def _check_status(server_response, success_code):
     return
 
 
-def signin(data):
+def _encode_for_display(text):
+    return text.encode('ascii', errors="backslashreplace").decode('utf-8')
+
+
+def sign_in(data):
+    """
+    Funcrion Description
+    """
     tableau_auth = TSC.TableauAuth(
         args.username, args.password, None if data['is_site_default'] else data['site_name'])
     server = TSC.Server(data['server_url'], use_server_version=True)
@@ -47,7 +55,10 @@ def signin(data):
     return server, auth_token, version, user_id
 
 
-def getProject(server, data):
+def get_project(server, data):
+    """
+    Funcrion Description
+    """
     all_projects, pagination_item = server.projects.get()
     project = next(
         (project for project in all_projects if project.name == data['project_path']), None)
@@ -59,8 +70,11 @@ def getProject(server, data):
             f"The project for {data['file_path']} workbook could not be found.")
 
 
-def publishWB(server, data):
-    project_id = getProject(server, data)
+def publish_workbook(server, data):
+    """
+    Funcrion Description
+    """
+    project_id = get_project(server, data)
 
     wb_path = os.path.dirname(os.path.realpath(__file__)).rsplit(
         '/', 1)[0] + "/workbooks/" + data['file_path']
@@ -82,33 +96,28 @@ def publishWB(server, data):
             f"\nUpdate Workbook Successfully and set Tags.")
 
 
-def createSchedule(server):
-    # Create an interval to run every 2 hours between 2:30AM and 11:00PM
-    hourly_interval = TSC.HourlyInterval(start_time=time(2, 30),
-                                         end_time=time(23, 0),
-                                         interval_value=2)
-    # Create schedule item
-    hourly_schedule = TSC.ScheduleItem(
-        "Hourly-Schedule", 50, TSC.ScheduleItem.Type.Extract, TSC.ScheduleItem.ExecutionOrder.Parallel, hourly_interval)
-    # Create schedule
-    hourly_schedule = server.schedules.create(hourly_schedule)
-
-
-def getWBID(server, data):
+def get_workbook_id(server, data):
+    """
+    Function Description
+    """
     all_workbooks_items, pagination_item = server.workbooks.get()
-    return [workbook.id for workbook in all_workbooks_items if workbook.name == data['name']]
+    workbook_id_list = [
+        workbook.id for workbook in all_workbooks_items if workbook.name == data['name']]
+    return workbook_id_list
 
 
-def getUserID(server, permission_user_name):
+def get_user_id(server, permission_user_name):
+    """
+    Funcrion Description
+    """
     all_users, pagination_item = server.users.get()
     return [user.id for user in all_users if user.name == permission_user_name]
 
 
-def _encode_for_display(text):
-    return text.encode('ascii', errors="backslashreplace").decode('utf-8')
-
-
 def query_permission(data, wb_id, user_id, version, auth_token):
+    """
+    Funcrion Description
+    """
     print("In query_permission Function.")
     url = f"https://tableau.devinvh.com/api/{version}/sites/{data['site_id']}/workbooks/{wb_id}/permissions"
 
@@ -127,6 +136,9 @@ def query_permission(data, wb_id, user_id, version, auth_token):
 
 
 def add_permission(data, wb_id, user_id, version, auth_token, permission_name, permission_mode):
+    """
+    Funcrion Description
+    """
     print("In add_permission Function.")
     url = f"https://tableau.devinvh.com/api/{version}/sites/{data['site_id']}/workbooks/{wb_id}/permissions"
 
@@ -146,36 +158,42 @@ def add_permission(data, wb_id, user_id, version, auth_token, permission_name, p
 
 
 def delete_permission(data, auth_token, wb_id, user_id, permission_name, existing_mode, version):
+    """
+    Funcrion Description
+    """
     print("In delete_permission Function.")
     url = f"https://tableau.devinvh.com/api/{version}/sites/{data['site_id']}/workbooks/{wb_id}/permissions/users/{user_id}/{permission_name}/{existing_mode}"
 
     print("\tDeleting existing permission")
 
     server_response = requests.delete(
-        url, headers={'x-tableau-auth': auth_token})
+        url, headers={'x-tableau-auth': auth_token},
+        timeout=5000)
     _check_status(server_response, 204)
     return
 
 
 def main(args):
+    """
+    Funcrion Description
+    """
     project_data_json = json.loads(args.project_data)
     try:
         for data in project_data_json:
             # Step: Sign in to Tableau server.
-            server, auth_token, version, user_id = signin(data)
+            server, auth_token, version, user_id = sign_in(data)
 
-            if data['project_path'] is None:
-                raise LookupError(
-                    f"The project project_path field is Null in JSON Template.", data['file_path'])
+            if "project_path" in data and data['project_path'] is None:
+                raise LookupError("The project_path field is Null in JSON Template.")
             else:
                 # Step: Form a new workbook item and publish.
-                # publishWB(server, data)
+                # publish_workbook(server, data)
 
                 # Step: Get the Workbook ID from the Workbook Name
-                wb_id = getWBID(server, data)[0]
+                wb_id = get_workbook_id(server, data)[0]
 
                 # Step: Get the User ID of permission assigned
-                permission_user_id = getUserID(
+                permission_user_id = get_user_id(
                     server, data['permissions']['permission_user_name'])[0]
 
                 # get permissions of specific workbook
@@ -183,11 +201,8 @@ def main(args):
                     data, wb_id, permission_user_id, version, auth_token)
                 print("Over query_permission Function.")
 
-                count = 0
                 update_permission = True
-                
                 for permission_name, permission_mode in data['permissions']['permission_template'].items():
-                    count = count + 1
                     if user_permissions is None:
                         print("In 1nd if condition")
                         add_permission(
@@ -195,6 +210,7 @@ def main(args):
                         print("Over add_permission Function.")
                         print(
                             f"\tPermission {permission_name} is set to {permission_mode} Successfully in {wb_id}\n")
+                        update_permission = False
                     else:
                         for permission in user_permissions:
                             if permission.get('name') == permission_name and permission.get('mode') != permission_mode:
@@ -202,7 +218,7 @@ def main(args):
                                 delete_permission(
                                     data, auth_token, wb_id, user_id, permission_name, existing_mode, version)
                                 print(
-                            f"\tPermission {permission_name} : {existing_mode} is deleted Successfully in {wb_id}\n")
+                                    f"\tPermission {permission_name} : {existing_mode} is deleted Successfully in {wb_id}\n")
                                 print("Over delete_permission Function.")
                             else:
                                 update_permission = False
@@ -218,18 +234,14 @@ def main(args):
                         print(
                             f"\tPermission {permission_name} is already set to {permission_mode} on {data['name']}\n")
 
-                print(count)
                 # Step: Update Project permissions
                 # add_permission(data, wb_id, user_id, version, auth_token)
-
-                # Step: Create New Schedule
-                # createSchedule(server)
 
             # Step: Sign Out to the Tableau Server
             server.auth.sign_out()
 
-    except Exception as e:
-        print(f"Something went wrong, Error occured.\n", e)
+    except Exception as tableu_exec:
+        print(f"Something went wrong, Error occured.=\n", tableu_exec)
         exit(1)
 
 

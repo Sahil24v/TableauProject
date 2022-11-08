@@ -18,7 +18,7 @@
           "Read": "Allow",
           "Write": "Allow",
           "Filter": "Allow",
-          "AddComment": "Deny",
+          "AddComment": "Allow",
           "ViewComments": "Deny",
           "ShareView": "Deny",
           "ExportData": "Deny",

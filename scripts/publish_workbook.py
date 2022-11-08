@@ -159,11 +159,11 @@ def delete_permission(data, auth_token, wb_id, user_id, permission_name, existin
     return
 
 
-def main(args):
+def main(arguments):
     """
     Funcrion Description
     """
-    project_data_json = json.loads(args.project_data)
+    project_data_json = json.loads(arguments.project_data)
     try:
         for data in project_data_json:
             # Step: Sign in to Tableau server.

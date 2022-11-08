@@ -15,8 +15,8 @@
       "permissions": {
         "permission_user_name": "Nirav.Padia",
         "permission_template": {
-          "Read": "Deny",
-          "Write": "Deny",
+          "Read": "Allow",
+          "Write": "Allow",
           "Filter": "Deny",
           "AddComment": "Deny",
           "ViewComments": "Deny",

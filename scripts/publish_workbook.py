@@ -122,7 +122,6 @@ def query_permission(data, wb_id, user_id, version, auth_token):
     """
     Funcrion Description
     """
-    print("In query_permission Function.")
     url = data['server_url'] + \
         f"api/{version}/sites/{data['site_id']}/workbooks/{wb_id}/permissions"
 
@@ -145,7 +144,6 @@ def add_permission(data, wb_id, user_id, version, auth_token, permission_name, p
     """
     Funcrion Description
     """
-    print("In add_permission Function.")
     url = data['server_url'] + \
         f"api/{version}/sites/{data['site_id']}/workbooks/{wb_id}/permissions"
 
@@ -168,12 +166,9 @@ def delete_permission(data, auth_token, wb_id, user_id, permission_name, existin
     """
     Funcrion Description
     """
-    print("In delete_permission Function.")
     url = data['server_url'] + \
         f"api/{version}/sites/{data['site_id']}/workbooks/{wb_id} \
             /permissions/users/{user_id}/{permission_name}/{existing_mode}"
-
-    print("\tDeleting existing permission")
 
     server_response = requests.delete(
         url, headers={'x-tableau-auth': auth_token},
@@ -212,9 +207,8 @@ def main(args):
 
                 for permission_name, permission_mode in \
                         data['permissions']['permission_template'].items():
-                    update_permission = True
+                    update_permission_flag = True
                     if user_permissions is None:
-                        print("In 1nd if condition")
                         add_permission(
                             data, wb_id, permission_user_id, version,
                             auth_token, permission_name, permission_mode
@@ -222,7 +216,7 @@ def main(args):
                         print(
                             f"\tPermission {permission_name} is set to \
                                 {permission_mode} Successfully in {wb_id}\n")
-                        update_permission = False
+                        update_permission_flag = False
                     else:
                         for permission in user_permissions:
                             if permission.get('name') == permission_name:
@@ -236,17 +230,17 @@ def main(args):
                                         data, auth_token, wb_id, user_id,
                                         permission_name, existing_mode, version
                                     )
-                                    update_permission = True
+                                    update_permission_flag = True
                                     print(
                                         f"\tPermission {permission_name} : {existing_mode} \
                                         is deleted Successfully in {wb_id}\n"
                                     )
                                 else:
-                                    update_permission = False
-                    print("update_permission Value ::", update_permission)
+                                    update_permission_flag = False
+                    print("update_permission_flag Value ::",
+                          update_permission_flag)
 
-                    if update_permission:
-                        print("In 2nd if condition")
+                    if update_permission_flag:
                         add_permission(
                             data, wb_id, user_id, version, auth_token,
                             permission_name, permission_mode
@@ -269,7 +263,7 @@ def main(args):
 
     except Exception as tableu_exception:
         logging.error(
-            "Something went wrong, Error occured.=\n %s", tableu_exception)
+            "Something went wrong, Error occured. %s", tableu_exception)
 
 
 if __name__ == '__main__':

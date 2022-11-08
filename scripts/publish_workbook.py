@@ -12,6 +12,13 @@ import xml.etree.ElementTree as ET
 xmlns = {'t': 'http://tableau.com/api'}
 
 
+class ApiCallError(Exception):
+    """
+    Class Description
+    """
+    pass
+
+
 def _check_status(server_response, success_code):
     if server_response.status_code != success_code:
         parsed_response = ET.fromstring(server_response.text)
@@ -26,7 +33,7 @@ def _check_status(server_response, success_code):
         summary = summary_element.text if summary_element is not None else 'unknown summary'
         detail = detail_element.text if detail_element is not None else 'unknown detail'
         error_message = f'{code}: {summary} - {detail}'
-        raise LookupError(error_message)
+        raise ApiCallError(error_message)
     return
 
 

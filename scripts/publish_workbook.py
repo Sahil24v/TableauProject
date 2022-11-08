@@ -4,17 +4,12 @@ Neccessory Module imports
 import os
 import json
 import argparse
-import xml.etree.ElementTree as ET
-import logging
 import tableauserverclient as TSC
 import requests
+import xml.etree.ElementTree as ET
 
 
 xmlns = {'t': 'http://tableau.com/api'}
-
-
-def _encode_for_display(text):
-    return text.encode('ascii', errors="backslashreplace").decode('utf-8')
 
 
 def _check_status(server_response, success_code):
@@ -31,9 +26,12 @@ def _check_status(server_response, success_code):
         summary = summary_element.text if summary_element is not None else 'unknown summary'
         detail = detail_element.text if detail_element is not None else 'unknown detail'
         error_message = f'{code}: {summary} - {detail}'
-        logging.error(
-            "Something went wrong, Error occured.\n %s", error_message)
-        exit(1)
+        raise LookupError(error_message)
+    return
+
+
+def _encode_for_display(text):
+    return text.encode('ascii', errors="backslashreplace").decode('utf-8')
 
 
 def sign_in(data):
@@ -166,11 +164,11 @@ def delete_permission(data, auth_token, wb_id, user_id, permission_name, existin
     return
 
 
-def main(arguments):
+def main(args):
     """
     Funcrion Description
     """
-    project_data_json = json.loads(arguments.project_data)
+    project_data_json = json.loads(args.project_data)
     try:
         for data in project_data_json:
             # Step: Sign in to Tableau server.
@@ -234,9 +232,8 @@ def main(arguments):
             server.auth.sign_out()
 
     except Exception as tableu_exception:
-        logging.error(
-            "Something went wrong, Error occured.\n %s", tableu_exception)
-        exit(1)
+        raise LookupError(
+            "Something went wrong, Error occured.=\n", tableu_exception)
 
 
 if __name__ == '__main__':

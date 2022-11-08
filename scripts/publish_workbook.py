@@ -212,6 +212,7 @@ def main(args):
                         update_permission = False
                     else:
                         for permission in user_permissions:
+                            print(permission.get('name'))
                             if permission.get('name') == permission_name:
                                 if permission.get('mode') != permission_mode:
                                     print(

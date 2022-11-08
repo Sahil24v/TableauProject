@@ -63,7 +63,8 @@ def get_project(server, data):
     if project.id is not None:
         return project.id
     else:
-        raise LookupError(f"The project for {data['file_path']} workbook could not be found.")
+        raise LookupError(
+            f"The project for {data['file_path']} workbook could not be found.")
 
 
 def publish_workbook(server, data):
@@ -81,8 +82,7 @@ def publish_workbook(server, data):
         new_workbook, wb_path, 'Overwrite', hidden_views=data['hidden_views'])
 
     print(
-        f"\nSuccessfully published {data['file_path']} Workbook in \
-            {data['project_path']} project in {data['site_name']} site.")
+        f"\nSuccessfully published {data['file_path']} Workbook in {data['project_path']} project in {data['site_name']} site.")
 
     # Update Workbook and set tags
     if len(data['tags']) > 0:
@@ -96,7 +96,6 @@ def get_workbook_id(server, data):
     """
     Function Description
     """
-    print("in")
     all_workbooks_items, pagination_item = server.workbooks.get()
     workbook_id_list = [
         workbook.id for workbook in all_workbooks_items if workbook.name == data['name']]
@@ -189,8 +188,6 @@ def main(arguments):
 
                 # Step: Get the Workbook ID from the Workbook Name
                 wb_id = get_workbook_id(server, data)[0]
-                print("out")
-                print("wb_id ::", wb_id)
 
                 # Step: Get the User ID of permission assigned
                 permission_user_id = get_user_id(
@@ -209,17 +206,14 @@ def main(arguments):
                             auth_token, permission_name, permission_mode
                         )
                         print(
-                            "\tPermission %s is set to %s Successfully in %s\n",
-                            permission_name, permission_mode, wb_id)
+                            f"\tPermission {permission_name} is set to {permission_mode} Successfully in {wb_id}\n")
                         update_permission_flag = False
                     else:
                         for permission in user_permissions:
                             if permission.get('name') == permission_name:
                                 if permission.get('mode') != permission_mode:
                                     print(
-                                        "Permission Name : %s, Permission Mode : %s",
-                                        permission.get(
-                                            'name'), permission.get('mode')
+                                        f"Permission Name :{permission.get('name')}, Permission Mode :{permission.get('mode')}"
                                     )
                                     existing_mode = permission.get('mode')
                                     delete_permission(
@@ -228,8 +222,7 @@ def main(arguments):
                                     )
                                     update_permission_flag = True
                                     print(
-                                        "\tPermission %s : %s is deleted Successfully in %s\n",
-                                        permission_name, existing_mode, wb_id
+                                        f"\tPermission {permission_name} : {existing_mode} is deleted Successfully in {wb_id}\n"
                                     )
                                 else:
                                     update_permission_flag = False
@@ -242,13 +235,11 @@ def main(arguments):
                             permission_name, permission_mode
                         )
                         print(
-                            "\tPermission %s is set to %s Successfully in %s\n",
-                            permission_name, permission_mode, wb_id
+                            f"\tPermission {permission_name} is set to {permission_mode} Successfully in {wb_id}\n"
                         )
                     else:
                         print(
-                            "\tPermission %s is already set to %s on %s\n",
-                            permission_name, permission_mode, data['name']
+                            f"\tPermission {permission_name} is already set to {permission_mode} on {data['name']}\n"
                         )
 
                 # Step: Update Project permissions

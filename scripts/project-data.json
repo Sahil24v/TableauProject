@@ -13,12 +13,24 @@
       "is_wb_new": true,
       "is_site_default": true,
       "permissions": {
-        "permission_user_name": "Nirav.Padia",
+        "permission_user_name": "Venkateswarlu.Velisetty",
         "permission_template": {
+          "Read": "Allow",
+          "Write": "Deny",
+          "Filter": "Deny",
+          "AddComment": "Allow",
           "ViewComments": "Deny",
-          "ExportXml": "Allow",
-          "Write": "Allow",
-          "Delete": "Deny"
+          "ShareView": "Deny",
+          "ExportData": "Deny",
+          "ViewUnderlyingData": "Allow",
+          "ExportImage": "Deny",
+          "Delete": "Deny",
+          "ChangeHierarchy": "Deny",
+          "ChangePermissions": "Allow",
+          "WebAuthoring": "Deny",
+          "ExportXml": "Deny",
+          "RunExplainData": "Deny",
+          "CreateRefreshMetrics": "Deny"
         }
       }
     }

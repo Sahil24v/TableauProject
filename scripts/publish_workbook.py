@@ -117,7 +117,6 @@ def query_permission(data, wb_id, user_id, version, auth_token):
     """
     Funcrion Description
     """
-    print("In query_permission Function.")
     url = f"https://tableau.devinvh.com/api/{version}/sites/{data['site_id']}/workbooks/{wb_id}/permissions"
 
     server_response = requests.get(
@@ -139,7 +138,6 @@ def add_permission(data, wb_id, user_id, version, auth_token, permission_name, p
     """
     Funcrion Description
     """
-    print("In add_permission Function.")
     url = f"https://tableau.devinvh.com/api/{version}/sites/{data['site_id']}/workbooks/{wb_id}/permissions"
 
     xml_request = ET.Element('tsRequest')
@@ -161,10 +159,7 @@ def delete_permission(data, auth_token, wb_id, user_id, permission_name, existin
     """
     Funcrion Description
     """
-    print("In delete_permission Function.")
     url = f"https://tableau.devinvh.com/api/{version}/sites/{data['site_id']}/workbooks/{wb_id}/permissions/users/{user_id}/{permission_name}/{existing_mode}"
-
-    print("\tDeleting existing permission")
 
     server_response = requests.delete(
         url, headers={'x-tableau-auth': auth_token},
@@ -204,7 +199,6 @@ def main(args):
                 for permission_name, permission_mode in data['permissions']['permission_template'].items():
                     update_permission = True
                     if user_permissions is None:
-                        print("In 1nd if condition")
                         add_permission(
                             data, wb_id, permission_user_id, version, auth_token, permission_name, permission_mode)
                         print(
@@ -227,7 +221,6 @@ def main(args):
                     print("update_permission Value ::", update_permission)
 
                     if update_permission:
-                        print("In 2nd if condition")
                         add_permission(
                             data, wb_id, user_id, version, auth_token, permission_name, permission_mode)
                         print(

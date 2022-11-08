@@ -4,11 +4,10 @@ Neccessory Module imports
 import os
 import json
 import argparse
+import xml.etree.ElementTree as ET
+import logging
 import tableauserverclient as TSC
 import requests
-import xml.etree.ElementTree as ET
-
-
 xmlns = {'t': 'http://tableau.com/api'}
 
 
@@ -22,12 +21,10 @@ class ApiCallError(Exception):
 def _check_status(server_response, success_code):
     if server_response.status_code != success_code:
         parsed_response = ET.fromstring(server_response.text)
-
         error_element = parsed_response.find('t:error', namespaces=xmlns)
         summary_element = parsed_response.find(
             './/t:summary', namespaces=xmlns)
         detail_element = parsed_response.find('.//t:detail', namespaces=xmlns)
-
         code = error_element.get(
             'code', 'unknown') if error_element is not None else 'unknown code'
         summary = summary_element.text if summary_element is not None else 'unknown summary'
@@ -49,12 +46,10 @@ def sign_in(data):
         args.username, args.password, None if data['is_site_default'] else data['site_name'])
     server = TSC.Server(data['server_url'], use_server_version=True)
     server.auth.sign_in(tableau_auth)
-
     server_response = vars(server)
     auth_token = server_response.get('_auth_token')
     version = server_response.get('version')
     user_id = server_response.get('_user_id')
-
     return server, auth_token, version, user_id
 
 
@@ -65,7 +60,6 @@ def get_project(server, data):
     all_projects, pagination_item = server.projects.get()
     project = next(
         (project for project in all_projects if project.name == data['project_path']), None)
-
     if project.id is not None:
         return project.id
     else:
@@ -78,18 +72,14 @@ def publish_workbook(server, data):
     Funcrion Description
     """
     project_id = get_project(server, data)
-
     wb_path = os.path.dirname(os.path.realpath(__file__)).rsplit(
         '/', 1)[0] + "/workbooks/" + data['file_path']
-
     new_workbook = TSC.WorkbookItem(
         name=data['name'], project_id=project_id, show_tabs=data['show_tabs'])
     new_workbook = server.workbooks.publish(
         new_workbook, wb_path, 'Overwrite', hidden_views=data['hidden_views'])
-
     print(
         f"\nSuccessfully published {data['file_path']} Workbook in {data['project_path']} project in {data['site_name']} site.")
-
     # Update Workbook and set tags
     if len(data['tags']) > 0:
         new_workbook.tags = set(data['tags'])
@@ -120,15 +110,13 @@ def query_permission(data, wb_id, user_id, version, auth_token):
     """
     Funcrion Description
     """
+    print("In query_permission Function.")
     url = f"https://tableau.devinvh.com/api/{version}/sites/{data['site_id']}/workbooks/{wb_id}/permissions"
-
     server_response = requests.get(
         url, headers={'x-tableau-auth': auth_token}, timeout=5000)
     _check_status(server_response, 200)
     server_response = _encode_for_display(server_response.text)
-
     parsed_response = ET.fromstring(server_response)
-
     capabilities = parsed_response.findall(
         './/t:granteeCapabilities', namespaces=xmlns)
     for capability in capabilities:
@@ -141,8 +129,8 @@ def add_permission(data, wb_id, user_id, version, auth_token, permission_name, p
     """
     Funcrion Description
     """
+    print("In add_permission Function.")
     url = f"https://tableau.devinvh.com/api/{version}/sites/{data['site_id']}/workbooks/{wb_id}/permissions"
-
     xml_request = ET.Element('tsRequest')
     permissions_element = ET.SubElement(xml_request, 'permissions')
     ET.SubElement(permissions_element, 'workbook', id=wb_id)
@@ -152,7 +140,6 @@ def add_permission(data, wb_id, user_id, version, auth_token, permission_name, p
     ET.SubElement(capabilities_element, 'capability',
                   name=permission_name, mode=permission_mode)
     xml_request = ET.tostring(xml_request)
-
     server_request = requests.put(
         url, data=xml_request,  headers={'x-tableau-auth': auth_token}, timeout=5000)
     _check_status(server_request, 200)
@@ -162,8 +149,9 @@ def delete_permission(data, auth_token, wb_id, user_id, permission_name, existin
     """
     Funcrion Description
     """
+    print("In delete_permission Function.")
     url = f"https://tableau.devinvh.com/api/{version}/sites/{data['site_id']}/workbooks/{wb_id}/permissions/users/{user_id}/{permission_name}/{existing_mode}"
-
+    print("\tDeleting existing permission")
     server_response = requests.delete(
         url, headers={'x-tableau-auth': auth_token},
         timeout=5000)
@@ -180,28 +168,24 @@ def main(args):
         for data in project_data_json:
             # Step: Sign in to Tableau server.
             server, auth_token, version, user_id = sign_in(data)
-
             if "project_path" in data and data['project_path'] is None:
                 raise LookupError(
                     "The project_path field is Null in JSON Template.")
             else:
                 # Step: Form a new workbook item and publish.
                 # publish_workbook(server, data)
-
                 # Step: Get the Workbook ID from the Workbook Name
                 wb_id = get_workbook_id(server, data)[0]
-
                 # Step: Get the User ID of permission assigned
                 permission_user_id = get_user_id(
                     server, data['permissions']['permission_user_name'])[0]
-
                 # get permissions of specific workbook
                 user_permissions = query_permission(
                     data, wb_id, permission_user_id, version, auth_token)
-
                 for permission_name, permission_mode in data['permissions']['permission_template'].items():
                     update_permission = True
                     if user_permissions is None:
+                        print("In 1nd if condition")
                         add_permission(
                             data, wb_id, permission_user_id, version, auth_token, permission_name, permission_mode)
                         print(
@@ -222,8 +206,8 @@ def main(args):
                                 else:
                                     update_permission = False
                     print("update_permission Value ::", update_permission)
-
                     if update_permission:
+                        print("In 2nd if condition")
                         add_permission(
                             data, wb_id, user_id, version, auth_token, permission_name, permission_mode)
                         print(
@@ -231,27 +215,22 @@ def main(args):
                     else:
                         print(
                             f"\tPermission {permission_name} is already set to {permission_mode} on {data['name']}\n")
-
                 # Step: Update Project permissions
                 # add_permission(data, wb_id, user_id, version, auth_token)
-
             # Step: Sign Out to the Tableau Server
             server.auth.sign_out()
-
     except Exception as tableu_exception:
-        raise LookupError(
-            "Something went wrong, Error occured.=\n", tableu_exception)
+        logging.error(
+            "Something went wrong, Error occured.\n %s", tableu_exception)
 
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(allow_abbrev=False)
-
     parser.add_argument('--username', action='store',
                         type=str, required=True)
     parser.add_argument('--password', action='store',
                         type=str, required=True)
     parser.add_argument('--project_data', action='store',
                         type=str, required=True)
-
     args = parser.parse_args()
     main(args)

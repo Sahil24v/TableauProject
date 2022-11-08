@@ -269,5 +269,5 @@ if __name__ == '__main__':
     parser.add_argument('--project_data', action='store',
                         type=str, required=True)
 
-    args = parser.parse_arguments()
+    args = parser.parse_args()
     main(args)

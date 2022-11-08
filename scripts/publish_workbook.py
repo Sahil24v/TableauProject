@@ -117,7 +117,7 @@ def query_permission(data, wb_id, user_id, version, auth_token):
     """
     url = data['server_url'] + \
         f"api/{version}/sites/{data['site_id']}/workbooks/{wb_id}/permissions"
-
+    print(url)
     server_response = requests.get(
         url, headers={'x-tableau-auth': auth_token}, timeout=5000)
     _check_status(server_response, 200)

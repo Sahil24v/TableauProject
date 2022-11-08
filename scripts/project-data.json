@@ -15,10 +15,10 @@
       "permissions": {
         "permission_user_name": "Nirav.Padia",
         "permission_template": {
-          "Write": "Deny",
-          "ViewComments": "Allow",
-          "Delete": "Deny",
-          "ExportXml": "Allow"
+          "ViewComments": "Deny",
+          "ExportXml": "Allow",
+          "Write": "Allow",
+          "Delete": "Deny"
         }
       }
     }

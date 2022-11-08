@@ -201,8 +201,6 @@ def main(arguments):
                         for permission in user_permissions:
                             if permission.get('name') == permission_name:
                                 if permission.get('mode') != permission_mode:
-                                    print(
-                                        f"Permission Name :{permission.get('name')}, Permission Mode :{permission.get('mode')}")
                                     existing_mode = permission.get('mode')
                                     delete_permission(
                                         data, auth_token, wb_id, user_id, permission_name, existing_mode, version)

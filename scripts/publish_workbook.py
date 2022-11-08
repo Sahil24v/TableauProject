@@ -207,16 +207,17 @@ def main(arguments):
                             auth_token, permission_name, permission_mode
                         )
                         print(
-                            f"\tPermission {permission_name} is set to \
-                                {permission_mode} Successfully in {wb_id}\n")
+                            "\tPermission %s is set to %s Successfully in %s\n",
+                            permission_name, permission_mode, wb_id)
                         update_permission_flag = False
                     else:
                         for permission in user_permissions:
                             if permission.get('name') == permission_name:
                                 if permission.get('mode') != permission_mode:
                                     print(
-                                        f"Permission Name :{permission.get('name')}, \
-                                            Permission Mode :{permission.get('mode')}"
+                                        "Permission Name : %s, Permission Mode : %s",
+                                        permission.get(
+                                            'name'), permission.get('mode')
                                     )
                                     existing_mode = permission.get('mode')
                                     delete_permission(
@@ -225,8 +226,8 @@ def main(arguments):
                                     )
                                     update_permission_flag = True
                                     print(
-                                        f"\tPermission {permission_name} : {existing_mode} \
-                                            is deleted Successfully in {wb_id}\n"
+                                        "\tPermission %s : %s is deleted Successfully in %s\n",
+                                        permission_name, existing_mode, wb_id
                                     )
                                 else:
                                     update_permission_flag = False
@@ -239,13 +240,13 @@ def main(arguments):
                             permission_name, permission_mode
                         )
                         print(
-                            f"\tPermission {permission_name} is set to \
-                                {permission_mode} Successfully in {wb_id}\n"
+                            "\tPermission %s is set to %s Successfully in %s\n",
+                            permission_name, permission_mode, wb_id
                         )
                     else:
                         print(
-                            f"\tPermission {permission_name} is already set \
-                                to {permission_mode} on {data['name']}\n"
+                            "\tPermission %s is already set to %s on %s\n",
+                            permission_name, permission_mode, data['name']
                         )
 
                 # Step: Update Project permissions
@@ -256,7 +257,7 @@ def main(arguments):
 
     except Exception as tableu_exception:
         logging.error(
-            "Something went wrong, Error occured. %s", tableu_exception)
+            "Something went wrong, Error occured.\n %s", tableu_exception)
 
 
 if __name__ == '__main__':

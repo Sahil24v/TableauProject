@@ -1,19 +1,20 @@
+"""
+Neccessory Module imports
+"""
 import os
 import json
 import argparse
+import xml.etree.ElementTree as ET
+import logging
 import tableauserverclient as TSC
 import requests
-import xml.etree.ElementTree as ET
 
 
 xmlns = {'t': 'http://tableau.com/api'}
 
 
-class ApiCallError(Exception):
-    """
-    Class Description
-    """
-    pass
+def _encode_for_display(text):
+    return text.encode('ascii', errors="backslashreplace").decode('utf-8')
 
 
 def _check_status(server_response, success_code):
@@ -30,12 +31,9 @@ def _check_status(server_response, success_code):
         summary = summary_element.text if summary_element is not None else 'unknown summary'
         detail = detail_element.text if detail_element is not None else 'unknown detail'
         error_message = f'{code}: {summary} - {detail}'
-        raise ApiCallError(error_message)
-    return
-
-
-def _encode_for_display(text):
-    return text.encode('ascii', errors="backslashreplace").decode('utf-8')
+        logging.error(
+            "Something went wrong, Error occured.\n %s", error_message)
+        exit(1)
 
 
 def sign_in(data):
@@ -117,7 +115,8 @@ def query_permission(data, wb_id, user_id, version, auth_token):
     """
     Funcrion Description
     """
-    url = f"https://tableau.devinvh.com/api/{version}/sites/{data['site_id']}/workbooks/{wb_id}/permissions"
+    url = data['server_url'] + \
+        f"api/{version}/sites/{data['site_id']}/workbooks/{wb_id}/permissions"
 
     server_response = requests.get(
         url, headers={'x-tableau-auth': auth_token}, timeout=5000)
@@ -168,11 +167,11 @@ def delete_permission(data, auth_token, wb_id, user_id, permission_name, existin
     return
 
 
-def main(args):
+def main(arguments):
     """
     Funcrion Description
     """
-    project_data_json = json.loads(args.project_data)
+    project_data_json = json.loads(arguments.project_data)
     try:
         for data in project_data_json:
             # Step: Sign in to Tableau server.
@@ -236,8 +235,9 @@ def main(args):
             server.auth.sign_out()
 
     except Exception as tableu_exception:
-        raise LookupError(
-            "Something went wrong, Error occured.=\n", tableu_exception)
+        logging.error(
+            "Something went wrong, Error occured.\n %s", tableu_exception)
+        exit(1)
 
 
 if __name__ == '__main__':

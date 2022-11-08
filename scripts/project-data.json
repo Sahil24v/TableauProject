@@ -15,10 +15,20 @@
       "permissions": {
         "permission_user_name": "Nirav.Padia",
         "permission_template": {
+          "Read": "Allow",
+          "Write": "Allow",
+          "Filter": "Allow",
+          "AddComment": "Allow",
           "ViewComments": "Allow",
-          "ExportXml": "Deny",
-          "Write": "Deny",
-          "Delete": "Allow"
+          "ShareView": "Allow",
+          "ExportData": "Allow",
+          "ViewUnderlyingData": "Allow",
+          "ExportImage": "Allow",
+          "Delete": "Allow",
+          "ChangeHierarchy": "Allow",
+          "ChangePermissions": "Allow",
+          "WebAuthoring": "Allow",
+          "ExportXml": "Allow"
         }
       }
     }

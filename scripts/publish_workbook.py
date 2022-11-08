@@ -202,8 +202,8 @@ def main(args):
                     data, wb_id, permission_user_id, version, auth_token)
                 print("Over query_permission Function.")
 
-                update_permission = True
                 for permission_name, permission_mode in data['permissions']['permission_template'].items():
+                    update_permission = True
                     if user_permissions is None:
                         print("In 1nd if condition")
                         add_permission(
@@ -218,6 +218,7 @@ def main(args):
                                 existing_mode = permission.get('mode')
                                 delete_permission(
                                     data, auth_token, wb_id, user_id, permission_name, existing_mode, version)
+                                update_permission = True
                                 print(
                                     f"\tPermission {permission_name} : {existing_mode} is deleted Successfully in {wb_id}\n")
                                 print("Over delete_permission Function.")
@@ -242,7 +243,8 @@ def main(args):
             server.auth.sign_out()
 
     except Exception as tableu_exception:
-        raise LookupError("Something went wrong, Error occured.=\n", tableu_exception)
+        raise LookupError(
+            "Something went wrong, Error occured.=\n", tableu_exception)
 
 
 if __name__ == '__main__':

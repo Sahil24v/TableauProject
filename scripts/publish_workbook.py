@@ -92,8 +92,7 @@ def publish_workbook(server, data):
         new_workbook.tags = set(data['tags'])
         new_workbook = server.workbooks.update(
             new_workbook)
-        print(
-            f"\nUpdate Workbook Successfully and set Tags.")
+        print("\nUpdate Workbook Successfully and set Tags.")
 
 
 def get_workbook_id(server, data):
@@ -121,7 +120,8 @@ def query_permission(data, wb_id, user_id, version, auth_token):
     print("In query_permission Function.")
     url = f"https://tableau.devinvh.com/api/{version}/sites/{data['site_id']}/workbooks/{wb_id}/permissions"
 
-    server_response = requests.get(url, headers={'x-tableau-auth': auth_token})
+    server_response = requests.get(
+        url, headers={'x-tableau-auth': auth_token}, timeout=5000)
     _check_status(server_response, 200)
     server_response = _encode_for_display(server_response.text)
 
@@ -153,7 +153,7 @@ def add_permission(data, wb_id, user_id, version, auth_token, permission_name, p
     xml_request = ET.tostring(xml_request)
 
     server_request = requests.put(
-        url, data=xml_request,  headers={'x-tableau-auth': auth_token})
+        url, data=xml_request,  headers={'x-tableau-auth': auth_token}, timeout=5000)
     _check_status(server_request, 200)
 
 
@@ -184,7 +184,8 @@ def main(args):
             server, auth_token, version, user_id = sign_in(data)
 
             if "project_path" in data and data['project_path'] is None:
-                raise LookupError("The project_path field is Null in JSON Template.")
+                raise LookupError(
+                    "The project_path field is Null in JSON Template.")
             else:
                 # Step: Form a new workbook item and publish.
                 # publish_workbook(server, data)
@@ -240,9 +241,8 @@ def main(args):
             # Step: Sign Out to the Tableau Server
             server.auth.sign_out()
 
-    except Exception as tableu_exec:
-        print(f"Something went wrong, Error occured.=\n", tableu_exec)
-        exit(1)
+    except Exception as tableu_exception:
+        raise LookupError("Something went wrong, Error occured.=\n", tableu_exception)
 
 
 if __name__ == '__main__':

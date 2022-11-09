@@ -106,6 +106,7 @@ def get_group_id(server, data):
     all_groups, pagination_item = server.groups.get()
     group_id_list = [
         group.id for group in all_groups if group.name == data['name']]
+    print("type(group_id_list) ::", type(group_id_list))
     return group_id_list
 
 
@@ -116,6 +117,7 @@ def get_user_id(server, permission_user_name):
     all_users, pagination_item = server.users.get()
     user_id_list = [
         user.id for user in all_users if user.name == permission_user_name]
+    print("type(user_id_list) ::", type(user_id_list))
     return user_id_list
 
 
@@ -201,16 +203,18 @@ def main(arguments):
                             print(
                                 f"permission_data['permission_group_name'] :: {permission_data['permission_group_name']}, permission_data['permission_group_name'] and not permission_data['permission_user_name'] :: {permission_data['permission_group_name'] and not permission_data['permission_user_name']}")
                             print(
-                                f"permission_data['permission_user_name'] :: {permission_data['permission_user_name']}, not permission_data['permission_group_name'] and permission_data['permission_user_name'] :: {not permission_data['permission_group_name'] and permission_data['permission_user_name']:}")
+                                f"permission_data['permission_user_name'] :: {permission_data['permission_user_name']}, not permission_data['permission_group_name'] and permission_data['permission_user_name'] :: {permission_data['permission_user_name'] and not permission_data['permission_group_name']}")
                                 
 
                             # Step: Get the User or Group ID of permission assigned
                             if permission_data['permission_group_name'] and not permission_data['permission_user_name']:
                                 permission_user_or_group_id = get_group_id(
                                     server, permission_data['permission_group_name'])[0]
+                                print(f"permission_user_or_group_id :: {permission_user_or_group_id}")
                             elif not permission_data['permission_group_name'] and permission_data['permission_user_name']:
                                 permission_user_or_group_id = get_user_id(
                                     server, permission_data['permission_user_name'])[0]
+                                print(f"permission_user_or_group_id :: {permission_user_or_group_id}")
                             else:
                                 logging.info(
                                     "permission_group_name and permission_user_name are both null, Please provide anyone of that.")

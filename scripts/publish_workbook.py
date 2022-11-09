@@ -193,9 +193,9 @@ def main(arguments):
                 # Step: Form a new workbook item and publish.
                 # publish_workbook(server, data)
 
-                if data['permissions'] is not None:
+                if data['permissions']:
                     for permission_data in data['permissions']:
-                        if permission_data['permission_template'] is not None:
+                        if permission_data['permission_template']:
 
                             # Step: Get the Workbook ID from the Workbook Name
                             # wb_id = get_workbook_id(server, data)[0]
@@ -204,20 +204,20 @@ def main(arguments):
                             #     f"permission_data['permission_group_name'] :: {permission_data['permission_group_name']}, permission_data['permission_group_name'] and not permission_data['permission_user_name'] :: {permission_data['permission_group_name'] and not permission_data['permission_user_name']}")
                             # print(
                             #     f"permission_data['permission_user_name'] :: {permission_data['permission_user_name']}, not permission_data['permission_group_name'] and permission_data['permission_user_name'] :: {permission_data['permission_user_name'] and not permission_data['permission_group_name']}")
-                                
+                            print(1)
 
                             # Step: Get the User or Group ID of permission assigned
-                            if permission_data['permission_group_name'] and not permission_data['permission_user_name']:
-                                permission_user_or_group_id = get_group_id(
-                                    server, permission_data['permission_group_name'])
-                                print(f"permission_user_or_group_id :: {permission_user_or_group_id}, type :: {type(permission_user_or_group_id)}")
-                            elif not permission_data['permission_group_name'] and permission_data['permission_user_name']:
-                                permission_user_or_group_id = get_user_id(
-                                    server, permission_data['permission_user_name'])[0]
-                                print(f"permission_user_or_group_id :: {permission_user_or_group_id}")
-                            else:
-                                logging.info(
-                                    "permission_group_name and permission_user_name are both null, Please provide anyone of that.")
+                            # if permission_data['permission_group_name'] and not permission_data['permission_user_name']:
+                            #     permission_user_or_group_id = get_group_id(
+                            #         server, permission_data['permission_group_name'])
+                            #     print(f"permission_user_or_group_id :: {permission_user_or_group_id}, type :: {type(permission_user_or_group_id)}")
+                            # elif not permission_data['permission_group_name'] and permission_data['permission_user_name']:
+                            #     permission_user_or_group_id = get_user_id(
+                            #         server, permission_data['permission_user_name'])[0]
+                            #     print(f"permission_user_or_group_id :: {permission_user_or_group_id}")
+                            # else:
+                            #     logging.info(
+                            #         "permission_group_name and permission_user_name are both null, Please provide anyone of that.")
 
                             # get permissions of specific workbook
                             # user_permissions = query_permission(

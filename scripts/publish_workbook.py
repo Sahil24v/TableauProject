@@ -198,12 +198,12 @@ def main(arguments):
                         if permission_data['permission_template'] is not None:
 
                             # Step: Get the Workbook ID from the Workbook Name
-                            wb_id = get_workbook_id(server, data)[0]
+                            # wb_id = get_workbook_id(server, data)[0]
 
-                            print(
-                                f"permission_data['permission_group_name'] :: {permission_data['permission_group_name']}, permission_data['permission_group_name'] and not permission_data['permission_user_name'] :: {permission_data['permission_group_name'] and not permission_data['permission_user_name']}")
-                            print(
-                                f"permission_data['permission_user_name'] :: {permission_data['permission_user_name']}, not permission_data['permission_group_name'] and permission_data['permission_user_name'] :: {permission_data['permission_user_name'] and not permission_data['permission_group_name']}")
+                            # print(
+                            #     f"permission_data['permission_group_name'] :: {permission_data['permission_group_name']}, permission_data['permission_group_name'] and not permission_data['permission_user_name'] :: {permission_data['permission_group_name'] and not permission_data['permission_user_name']}")
+                            # print(
+                            #     f"permission_data['permission_user_name'] :: {permission_data['permission_user_name']}, not permission_data['permission_group_name'] and permission_data['permission_user_name'] :: {permission_data['permission_user_name'] and not permission_data['permission_group_name']}")
                                 
 
                             # Step: Get the User or Group ID of permission assigned

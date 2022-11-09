@@ -171,7 +171,7 @@ def main(arguments):
             # Step: Sign in to Tableau server.
             server, auth_token, version, user_id = sign_in(data)
 
-            if "project_path" in data and data['project_path'] is None:
+            if data['project_path'] is None:
                 raise LookupError(
                     "The project_path field is Null in JSON Template.")
             else:
@@ -181,7 +181,7 @@ def main(arguments):
                 # Step: Get the Workbook ID from the Workbook Name
                 wb_id = get_workbook_id(server, data)[0]
 
-                if "permissions" in data and "permission_template" in data and data['permissions']['permission_template'] is not None:
+                if data['permissions']['permission_template'] is not None:
                     # Step: Get the User ID of permission assigned
                     permission_user_id = get_user_id(
                         server, data['permissions']['permission_user_name'])[0]
@@ -226,7 +226,7 @@ def main(arguments):
     except Exception as tableu_exception:
         logging.error(
             "Something went wrong, Error occured.\n %s", tableu_exception)
-
+        exit(1)
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(allow_abbrev=False)

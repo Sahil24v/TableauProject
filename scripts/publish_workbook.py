@@ -116,7 +116,6 @@ def get_user_id(server, permission_user_name):
     all_users, pagination_item = server.users.get()
     user_id_list = [
         user.id for user in all_users if user.name == permission_user_name]
-    print("type(user_id_list) ::", type(user_id_list))
     return user_id_list
 
 

@@ -229,10 +229,11 @@ def main(arguments):
                                 data, wb_id, permission_user_or_group_id, version, auth_token, is_group)
 
                             print("Get User Permissions Done")
-                            
+
                             for permission_name, permission_mode in permission_data['permission_template'].items():
                                 update_permission_flag = True
                                 if user_permissions is None:
+                                    print("user_permissions is emtpy")
                                     add_permission(
                                         data, wb_id, permission_user_or_group_id, version, auth_token, permission_name, permission_mode, is_group)
                                     # print(

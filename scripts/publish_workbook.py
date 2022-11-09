@@ -171,11 +171,14 @@ def add_permission(data, wb_id, permission_user_or_group_id, version, auth_token
     _check_status(server_request, 200)
 
 
-def delete_permission(data, auth_token, wb_id, user_id, permission_name, existing_mode, version):
+def delete_permission(data, auth_token, wb_id, permission_user_or_group_id, permission_name, existing_mode, version, is_group):
     """
     Funcrion Description
     """
-    url = f"https://tableau.devinvh.com/api/{version}/sites/{data['site_id']}/workbooks/{wb_id}/permissions/users/{user_id}/{permission_name}/{existing_mode}"
+    if is_group:
+        url = f"https://tableau.devinvh.com/api/{version}/sites/{data['site_id']}/workbooks/{wb_id}/permissions/groups/{permission_user_or_group_id}/{permission_name}/{existing_mode}"
+    else:
+        url = f"https://tableau.devinvh.com/api/{version}/sites/{data['site_id']}/workbooks/{wb_id}/permissions/users/{permission_user_or_group_id}/{permission_name}/{existing_mode}"
 
     server_response = requests.delete(
         url, headers={'x-tableau-auth': auth_token},
@@ -225,6 +228,7 @@ def main(arguments):
                                     "permission_group_name and permission_user_name are both null, Please provide anyone of that.")
 
                             print(f"is_group :: {is_group}")
+
                             # get permissions of specific workbook
                             user_permissions = query_permission(
                                 data, wb_id, permission_user_or_group_id, version, auth_token, is_group)
@@ -255,6 +259,7 @@ def main(arguments):
                                                 update_permission_flag = False
 
                                 if update_permission_flag:
+                                    print("In sbnlgb")
                                     add_permission(
                                         data, wb_id, permission_user_or_group_id, version, auth_token, permission_name, permission_mode, is_group)
                                     # print(

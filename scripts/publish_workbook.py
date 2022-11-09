@@ -198,18 +198,21 @@ def main(arguments):
                             # Step: Get the Workbook ID from the Workbook Name
                             wb_id = get_workbook_id(server, data)[0]
 
-                            print(f"permission_data['permission_group_name'] :: {permission_data['permission_group_name']}")
-                            print(f"permission_data['permission_user_name'] :: {permission_data['permission_user_name']}")
-                            
+                            print(
+                                f"permission_data['permission_group_name'] :: {permission_data['permission_group_name']}, permission_data['permission_group_name'] and not permission_data['permission_user_name'] :: {permission_data['permission_group_name'] and not permission_data['permission_user_name']}")
+                            print(
+                                f"permission_data['permission_user_name'] :: {permission_data['permission_user_name']}, not permission_data['permission_group_name'] and permission_data['permission_user_name'] :: {not permission_data['permission_group_name'] and permission_data['permission_user_name']:}")
+                                
+
                             # Step: Get the User or Group ID of permission assigned
-                            if permission_data['permission_group_name'] is not None and permission_data['permission_user_name'] is None:
+                            if permission_data['permission_group_name'] and not permission_data['permission_user_name']:
                                 permission_user_or_group_id = get_group_id(
                                     server, permission_data['permission_group_name'])[0]
-                            elif permission_data['permission_group_name'] is None and permission_data['permission_user_name'] is not None:
+                            elif not permission_data['permission_group_name'] and permission_data['permission_user_name']:
                                 permission_user_or_group_id = get_user_id(
                                     server, permission_data['permission_user_name'])[0]
                             else:
-                                logging.error(
+                                logging.info(
                                     "permission_group_name and permission_user_name are both null, Please provide anyone of that.")
 
                             # get permissions of specific workbook

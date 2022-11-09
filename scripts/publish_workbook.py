@@ -106,7 +106,6 @@ def get_group_id(server, permission_group_name):
     all_groups, pagination_item = server.groups.get()
     group_id_list = [
         group.id for group in all_groups if group.name == permission_group_name]
-    print("type(group_id_list) ::", type(group_id_list))
     return group_id_list
 
 
@@ -136,7 +135,7 @@ def query_permission(data, wb_id, user_id, version, auth_token, user_or_group):
         './/t:granteeCapabilities', namespaces=xmlns)
 
     for capability in capabilities:
-        group = capability.find(user_or_group, namespaces=xmlns)
+        group = capability.find('.//t:group', namespaces=xmlns)
         if group is not None and group.get('id') == user_id:
             return capability.findall('.//t:capability', namespaces=xmlns)
 

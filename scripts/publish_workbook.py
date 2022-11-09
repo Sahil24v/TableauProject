@@ -224,6 +224,7 @@ def main(arguments):
                                 logging.info(
                                     "permission_group_name and permission_user_name are both null, Please provide anyone of that.")
 
+                            print(f"is_group :: {is_group}")
                             # get permissions of specific workbook
                             user_permissions = query_permission(
                                 data, wb_id, permission_user_or_group_id, version, auth_token, is_group)

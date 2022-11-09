@@ -10,7 +10,6 @@
       "tags": ["sample", "temp"],
       "hidden_views": ["Growth Rates"],
       "show_tabs": true,
-      "is_wb_new": true,
       "is_site_default": true,
       "permissions": [
         {
@@ -58,7 +57,7 @@
           }
         },
         {
-          "permission_group_name": "",
+          "permission_group_name": "All Users",
           "permission_user_name": "",
           "permission_template": {
             "Read": "Deny",

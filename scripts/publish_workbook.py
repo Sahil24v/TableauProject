@@ -150,7 +150,8 @@ def add_permission(data, wb_id, user_id, version, auth_token, permission_name, p
     permissions_element = ET.SubElement(xml_request, 'permissions')
     ET.SubElement(permissions_element, 'workbook', id=wb_id)
     grantee_element = ET.SubElement(permissions_element, 'granteeCapabilities')
-    ET.SubElement(grantee_element, 'user', id=user_id)
+    # ET.SubElement(grantee_element, 'user', id=user_id)
+    ET.SubElement(grantee_element, 'group', id=user_id)
     capabilities_element = ET.SubElement(grantee_element, 'capabilities')
     ET.SubElement(capabilities_element, 'capability',
                   name=permission_name, mode=permission_mode)

@@ -251,7 +251,7 @@ def main(arguments):
                                                 existing_mode = permission.get(
                                                     'mode')
                                                 delete_permission(
-                                                    data, auth_token, wb_id, permission_user_or_group_id, permission_name, existing_mode, version)
+                                                    data, auth_token, wb_id, permission_user_or_group_id, permission_name, existing_mode, version, is_group)
                                                 update_permission_flag = True
                                                 # print(
                                                 #     f"\tPermission {permission_name} : {existing_mode} is deleted Successfully in {wb_id}\n")

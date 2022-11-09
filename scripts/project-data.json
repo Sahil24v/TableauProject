@@ -16,9 +16,9 @@
         {
           "permission_user_name": "Nirav.Padia",
           "permission_template": {
-            "Read": "Allow",
+            "Read": "Deny",
             "Write": "Allow",
-            "Filter": "Allow",
+            "Filter": "Deny",
             "AddComment": "Allow",
             "ViewComments": "Deny",
             "ShareView": "Deny",
@@ -37,21 +37,21 @@
         {
           "permission_user_name": "Venkateswarlu.Velisetty",
           "permission_template": {
-            "Read": "Allow",
+            "Read": "Deny",
             "Write": "Deny",
             "Filter": "Allow",
             "AddComment": "Deny",
             "ViewComments": "Deny",
             "ShareView": "Deny",
-            "ExportData": "Deny",
+            "ExportData": "Allow",
             "ViewUnderlyingData": "Deny",
-            "ExportImage": "Allow",
+            "ExportImage": "Deny",
             "Delete": "Deny",
             "ChangeHierarchy": "Allow",
-            "ChangePermissions": "Allow",
+            "ChangePermissions": "Deny",
             "WebAuthoring": "Deny",
             "ExportXml": "Allow",
-            "RunExplainData": "Allow",
+            "RunExplainData": "Deny",
             "CreateRefreshMetrics": "Deny"
           }
         }

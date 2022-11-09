@@ -49,8 +49,8 @@ def sign_in(data):
     server_response = vars(server)
     auth_token = server_response.get('_auth_token')
     version = server_response.get('version')
-    user_id = server_response.get('_user_id')
-    return server, auth_token, version, user_id
+    
+    return server, auth_token, version
 
 
 def get_project(server, data):
@@ -171,7 +171,7 @@ def main(arguments):
         for data in project_data_json:
 
             # Step: Sign in to Tableau server.
-            server, auth_token, version, user_id = sign_in(data)
+            server, auth_token, version = sign_in(data)
 
             if data['project_path'] is None:
                 raise LookupError(
@@ -184,21 +184,17 @@ def main(arguments):
                     for permission_data in data['permissions']:
                         if permission_data['permission_user_name'] is not None and permission_data['permission_template'] is not None:
 
-                            print(1)
                             # Step: Get the Workbook ID from the Workbook Name
                             wb_id = get_workbook_id(server, data)[0]
 
-                            print(2)
                             # Step: Get the User ID of permission assigned
                             permission_user_id = get_user_id(
                                 server, permission_data['permission_user_name'])[0]
 
-                            print(3)
                             # get permissions of specific workbook
                             user_permissions = query_permission(
                                 data, wb_id, permission_user_id, version, auth_token)
 
-                            print(4)
                             for permission_name, permission_mode in permission_data['permission_template'].items():
                                 update_permission_flag = True
                                 if user_permissions is None:
@@ -214,7 +210,7 @@ def main(arguments):
                                                 existing_mode = permission.get(
                                                     'mode')
                                                 delete_permission(
-                                                    data, auth_token, wb_id, user_id, permission_name, existing_mode, version)
+                                                    data, auth_token, wb_id, permission_user_id, permission_name, existing_mode, version)
                                                 update_permission_flag = True
                                                 print(
                                                     f"\tPermission {permission_name} : {existing_mode} is deleted Successfully in {wb_id}\n")
@@ -223,7 +219,7 @@ def main(arguments):
 
                                 if update_permission_flag:
                                     add_permission(
-                                        data, wb_id, user_id, version, auth_token, permission_name, permission_mode)
+                                        data, wb_id, permission_user_id, version, auth_token, permission_name, permission_mode)
                                     print(
                                         f"\tPermission {permission_name} is set to {permission_mode} Successfully in {wb_id}\n")
                                 else:

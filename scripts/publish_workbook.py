@@ -136,8 +136,8 @@ def query_permission(data, wb_id, user_id, version, auth_token, user_or_group):
         './/t:granteeCapabilities', namespaces=xmlns)
 
     for capability in capabilities:
-        user = capability.find(user_or_group, namespaces=xmlns)
-        if user is not None and user.get('id') == user_id:
+        group = capability.find(user_or_group, namespaces=xmlns)
+        if group is not None and group.get('id') == user_id:
             return capability.findall('.//t:capability', namespaces=xmlns)
 
 
@@ -202,17 +202,12 @@ def main(arguments):
 
                             # Step: Get the User or Group ID of permission assigned
                             if permission_data['permission_group_name'] and not permission_data['permission_user_name']:
-                                print("In if block.")
                                 permission_user_or_group_id = get_group_id(
                                     server, permission_data['permission_group_name'])[0]
-                                print(
-                                    f"permission_user_or_group_id :: {permission_user_or_group_id}, type :: {type(permission_user_or_group_id)}")
                                 user_or_group = ".//t:group"
                             elif not permission_data['permission_group_name'] and permission_data['permission_user_name']:
                                 permission_user_or_group_id = get_user_id(
                                     server, permission_data['permission_user_name'])[0]
-                                print(
-                                    f"permission_user_or_group_id :: {permission_user_or_group_id}, type :: {type(permission_user_or_group_id)}")
                                 user_or_group = ".//t:user"
                             else:
                                 logging.info(

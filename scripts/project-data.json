@@ -12,27 +12,50 @@
       "show_tabs": true,
       "is_wb_new": true,
       "is_site_default": true,
-      "permissions": {
-        "permission_user_name": "Nirav.Padia",
-        "permission_template": {
-          "Read": "Allow",
-          "Write": "Allow",
-          "Filter": "Allow",
-          "AddComment": "Allow",
-          "ViewComments": "Deny",
-          "ShareView": "Deny",
-          "ExportData": "Deny",
-          "ViewUnderlyingData": "Deny",
-          "ExportImage": "Allow",
-          "Delete": "Deny",
-          "ChangeHierarchy": "Deny",
-          "ChangePermissions": "Allow",
-          "WebAuthoring": "Deny",
-          "ExportXml": "Deny",
-          "RunExplainData": "Allow",
-          "CreateRefreshMetrics": "Deny"
+      "permissions": [
+        {
+          "permission_user_name": "Nirav.Padia",
+          "permission_template": {
+            "Read": "Deny",
+            "Write": "Deny",
+            "Filter": "Deny",
+            "AddComment": "Deny",
+            "ViewComments": "Deny",
+            "ShareView": "Deny",
+            "ExportData": "Deny",
+            "ViewUnderlyingData": "Deny",
+            "ExportImage": "Deny",
+            "Delete": "Deny",
+            "ChangeHierarchy": "Deny",
+            "ChangePermissions": "Deny",
+            "WebAuthoring": "Deny",
+            "ExportXml": "Deny",
+            "RunExplainData": "Deny",
+            "CreateRefreshMetrics": "Deny"
+          }
+        },
+        {
+          "permission_user_name": "Venkateswarlu.Velisetty",
+          "permission_template": {
+            "Read": "Deny",
+            "Write": "Deny",
+            "Filter": "Deny",
+            "AddComment": "Deny",
+            "ViewComments": "Deny",
+            "ShareView": "Deny",
+            "ExportData": "Deny",
+            "ViewUnderlyingData": "Deny",
+            "ExportImage": "Deny",
+            "Delete": "Deny",
+            "ChangeHierarchy": "Deny",
+            "ChangePermissions": "Deny",
+            "WebAuthoring": "Deny",
+            "ExportXml": "Deny",
+            "RunExplainData": "Deny",
+            "CreateRefreshMetrics": "Deny"
+          }
         }
-      }
+      ]
     }
   ]
 }

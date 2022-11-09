@@ -14,6 +14,7 @@
       "is_site_default": true,
       "permissions": [
         {
+          "permission_group_name": "",
           "permission_user_name": "Nirav.Padia",
           "permission_template": {
             "Read": "Deny",
@@ -35,7 +36,30 @@
           }
         },
         {
+          "permission_group_name": "",
           "permission_user_name": "Venkateswarlu.Velisetty",
+          "permission_template": {
+            "Read": "Deny",
+            "Write": "Deny",
+            "Filter": "Deny",
+            "AddComment": "Deny",
+            "ViewComments": "Deny",
+            "ShareView": "Deny",
+            "ExportData": "Deny",
+            "ViewUnderlyingData": "Deny",
+            "ExportImage": "Deny",
+            "Delete": "Deny",
+            "ChangeHierarchy": "Deny",
+            "ChangePermissions": "Deny",
+            "WebAuthoring": "Deny",
+            "ExportXml": "Deny",
+            "RunExplainData": "Deny",
+            "CreateRefreshMetrics": "Deny"
+          }
+        },
+        {
+          "permission_group_name": "",
+          "permission_user_name": "",
           "permission_template": {
             "Read": "Deny",
             "Write": "Deny",

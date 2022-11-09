@@ -173,64 +173,69 @@ def main(arguments):
             # Step: Sign in to Tableau server.
             server, auth_token, version = sign_in(data)
 
-            if data['project_path'] is None:
-                raise LookupError(
-                    "The project_path field is Null in JSON Template.")
-            else:
-                # Step: Form a new workbook item and publish.
-                # publish_workbook(server, data)
+            all_groups, pagination_item = server.groups.get()
+            # print the names of the first 100 groups
+            for group in all_groups :
+                print(f"group name : {group.name}, group id : {group.id}")
 
-                if data['permissions'] is not None:
-                    for permission_data in data['permissions']:
-                        if permission_data['permission_user_name'] is not None and permission_data['permission_template'] is not None:
+            # if data['project_path'] is None:
+            #     raise LookupError(
+            #         "The project_path field is Null in JSON Template.")
+            # else:
+            #     # Step: Form a new workbook item and publish.
+            #     # publish_workbook(server, data)
 
-                            # Step: Get the Workbook ID from the Workbook Name
-                            wb_id = get_workbook_id(server, data)[0]
+            #     if data['permissions'] is not None:
+            #         for permission_data in data['permissions']:
+            #             if permission_data['permission_user_name'] is not None and permission_data['permission_template'] is not None:
 
-                            # Step: Get the User ID of permission assigned
-                            permission_user_id = get_user_id(
-                                server, permission_data['permission_user_name'])[0]
+            #                 # Step: Get the Workbook ID from the Workbook Name
+            #                 wb_id = get_workbook_id(server, data)[0]
 
-                            # get permissions of specific workbook
-                            user_permissions = query_permission(
-                                data, wb_id, permission_user_id, version, auth_token)
+            #                 # Step: Get the User ID of permission assigned
+            #                 permission_user_id = get_user_id(
+            #                     server, permission_data['permission_user_name'])[0]
 
-                            for permission_name, permission_mode in permission_data['permission_template'].items():
-                                update_permission_flag = True
-                                if user_permissions is None:
-                                    add_permission(
-                                        data, wb_id, permission_user_id, version, auth_token, permission_name, permission_mode)
-                                    print(
-                                        f"\tPermission {permission_name} is set to {permission_mode} Successfully in {wb_id}\n")
-                                    update_permission_flag = False
-                                else:
-                                    for permission in user_permissions:
-                                        if permission.get('name') == permission_name:
-                                            if permission.get('mode') != permission_mode:
-                                                existing_mode = permission.get(
-                                                    'mode')
-                                                delete_permission(
-                                                    data, auth_token, wb_id, permission_user_id, permission_name, existing_mode, version)
-                                                update_permission_flag = True
-                                                print(
-                                                    f"\tPermission {permission_name} : {existing_mode} is deleted Successfully in {wb_id}\n")
-                                            else:
-                                                update_permission_flag = False
+            #                 # get permissions of specific workbook
+            #                 user_permissions = query_permission(
+            #                     data, wb_id, permission_user_id, version, auth_token)
 
-                                if update_permission_flag:
-                                    add_permission(
-                                        data, wb_id, permission_user_id, version, auth_token, permission_name, permission_mode)
-                                    print(
-                                        f"\tPermission {permission_name} is set to {permission_mode} Successfully in {wb_id}\n")
-                                else:
-                                    print(
-                                        f"\tPermission {permission_name} is already set to {permission_mode} on {data['name']}\n")
-                        else:
-                            logging.info(
-                                "Something went wrong, Error occured.\n User Name or List of Permissions in template are null")
-                else:
-                    logging.info(
-                        "Something went wrong, Error occured.\n Permissions in template are null")
+            #                 for permission_name, permission_mode in permission_data['permission_template'].items():
+            #                     update_permission_flag = True
+            #                     if user_permissions is None:
+            #                         add_permission(
+            #                             data, wb_id, permission_user_id, version, auth_token, permission_name, permission_mode)
+            #                         print(
+            #                             f"\tPermission {permission_name} is set to {permission_mode} Successfully in {wb_id}\n")
+            #                         update_permission_flag = False
+            #                     else:
+            #                         for permission in user_permissions:
+            #                             if permission.get('name') == permission_name:
+            #                                 if permission.get('mode') != permission_mode:
+            #                                     existing_mode = permission.get(
+            #                                         'mode')
+            #                                     delete_permission(
+            #                                         data, auth_token, wb_id, permission_user_id, permission_name, existing_mode, version)
+            #                                     update_permission_flag = True
+            #                                     print(
+            #                                         f"\tPermission {permission_name} : {existing_mode} is deleted Successfully in {wb_id}\n")
+            #                                 else:
+            #                                     update_permission_flag = False
+
+            #                     if update_permission_flag:
+            #                         add_permission(
+            #                             data, wb_id, permission_user_id, version, auth_token, permission_name, permission_mode)
+            #                         print(
+            #                             f"\tPermission {permission_name} is set to {permission_mode} Successfully in {wb_id}\n")
+            #                     else:
+            #                         print(
+            #                             f"\tPermission {permission_name} is already set to {permission_mode} on {data['name']}\n")
+            #             else:
+            #                 logging.info(
+            #                     "Something went wrong, Error occured.\n User Name or List of Permissions in template are null")
+            #     else:
+            #         logging.info(
+            #             "Something went wrong, Error occured.\n Permissions in template are null")
 
             # Step: Sign Out to the Tableau Server
             server.auth.sign_out()

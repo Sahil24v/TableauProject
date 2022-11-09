@@ -182,19 +182,23 @@ def main(arguments):
 
                 if data['permissions'] is not None:
                     for permission_data in data['permissions']:
-                        if data['permission_user_name'] is not None and data['permission_template'] is not None:
+                        if permission_data['permission_user_name'] is not None and permission_data['permission_template'] is not None:
 
+                            print(1)
                             # Step: Get the Workbook ID from the Workbook Name
                             wb_id = get_workbook_id(server, data)[0]
 
+                            print(2)
                             # Step: Get the User ID of permission assigned
                             permission_user_id = get_user_id(
                                 server, permission_data['permission_user_name'])[0]
 
+                            print(3)
                             # get permissions of specific workbook
                             user_permissions = query_permission(
                                 data, wb_id, permission_user_id, version, auth_token)
 
+                            print(4)
                             for permission_name, permission_mode in permission_data['permission_template'].items():
                                 update_permission_flag = True
                                 if user_permissions is None:

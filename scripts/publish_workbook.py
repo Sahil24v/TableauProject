@@ -49,7 +49,6 @@ def sign_in(data):
     server_response = vars(server)
     auth_token = server_response.get('_auth_token')
     version = server_response.get('version')
-    
     return server, auth_token, version
 
 
@@ -100,15 +99,27 @@ def get_workbook_id(server, data):
     return workbook_id_list
 
 
+def get_group_id(server, permission_group_name):
+    """
+    Function Description
+    """
+    all_groups, pagination_item = server.groups.get()
+    group_id_list = [
+        group.id for group in all_groups if group.name == permission_group_name]
+    return group_id_list
+
+
 def get_user_id(server, permission_user_name):
     """
     Funcrion Description
     """
     all_users, pagination_item = server.users.get()
-    return [user.id for user in all_users if user.name == permission_user_name]
+    user_id_list = [
+        user.id for user in all_users if user.name == permission_user_name]
+    return user_id_list
 
 
-def query_permission(data, wb_id, user_id, version, auth_token):
+def query_permission(data, wb_id, permission_user_or_group_id, version, auth_token, is_group):
     """
     Funcrion Description
     """
@@ -122,13 +133,19 @@ def query_permission(data, wb_id, user_id, version, auth_token):
     capabilities = parsed_response.findall(
         './/t:granteeCapabilities', namespaces=xmlns)
 
-    for capability in capabilities:
-        user = capability.find('.//t:user', namespaces=xmlns)
-        if user is not None and user.get('id') == user_id:
-            return capability.findall('.//t:capability', namespaces=xmlns)
+    if is_group:
+        for capability in capabilities:
+            group = capability.find('.//t:group', namespaces=xmlns)
+            if group is not None and group.get('id') == permission_user_or_group_id:
+                return capability.findall('.//t:capability', namespaces=xmlns)
+    else:
+        for capability in capabilities:
+            user = capability.find('.//t:user', namespaces=xmlns)
+            if user is not None and user.get('id') == permission_user_or_group_id:
+                return capability.findall('.//t:capability', namespaces=xmlns)
 
 
-def add_permission(data, wb_id, user_id, version, auth_token, permission_name, permission_mode):
+def add_permission(data, wb_id, permission_user_or_group_id, version, auth_token, permission_name, permission_mode, is_group):
     """
     Funcrion Description
     """
@@ -138,7 +155,12 @@ def add_permission(data, wb_id, user_id, version, auth_token, permission_name, p
     permissions_element = ET.SubElement(xml_request, 'permissions')
     ET.SubElement(permissions_element, 'workbook', id=wb_id)
     grantee_element = ET.SubElement(permissions_element, 'granteeCapabilities')
-    ET.SubElement(grantee_element, 'user', id=user_id)
+
+    if is_group:
+        ET.SubElement(grantee_element, 'group', id=permission_user_or_group_id)
+    else:
+        ET.SubElement(grantee_element, 'user', id=permission_user_or_group_id)
+
     capabilities_element = ET.SubElement(grantee_element, 'capabilities')
     ET.SubElement(capabilities_element, 'capability',
                   name=permission_name, mode=permission_mode)
@@ -149,11 +171,14 @@ def add_permission(data, wb_id, user_id, version, auth_token, permission_name, p
     _check_status(server_request, 200)
 
 
-def delete_permission(data, auth_token, wb_id, user_id, permission_name, existing_mode, version):
+def delete_permission(data, auth_token, wb_id, permission_user_or_group_id, permission_name, existing_mode, version, is_group):
     """
     Funcrion Description
     """
-    url = f"https://tableau.devinvh.com/api/{version}/sites/{data['site_id']}/workbooks/{wb_id}/permissions/users/{user_id}/{permission_name}/{existing_mode}"
+    if is_group:
+        url = f"https://tableau.devinvh.com/api/{version}/sites/{data['site_id']}/workbooks/{wb_id}/permissions/groups/{permission_user_or_group_id}/{permission_name}/{existing_mode}"
+    else:
+        url = f"https://tableau.devinvh.com/api/{version}/sites/{data['site_id']}/workbooks/{wb_id}/permissions/users/{permission_user_or_group_id}/{permission_name}/{existing_mode}"
 
     server_response = requests.delete(
         url, headers={'x-tableau-auth': auth_token},
@@ -180,26 +205,38 @@ def main(arguments):
                 # Step: Form a new workbook item and publish.
                 # publish_workbook(server, data)
 
-                if data['permissions'] is not None:
+                if data['permissions']:
                     for permission_data in data['permissions']:
-                        if permission_data['permission_user_name'] is not None and permission_data['permission_template'] is not None:
+                        if permission_data['permission_template']:
+                            print("---------------------------------------------------------------------------------------------------------------------------------")
+
+                            is_group = None
 
                             # Step: Get the Workbook ID from the Workbook Name
                             wb_id = get_workbook_id(server, data)[0]
 
-                            # Step: Get the User ID of permission assigned
-                            permission_user_id = get_user_id(
-                                server, permission_data['permission_user_name'])[0]
+                            # Step: Get the User or Group ID of permission assigned
+                            if permission_data['permission_group_name'] and not permission_data['permission_user_name']:
+                                permission_user_or_group_id = get_group_id(
+                                    server, permission_data['permission_group_name'])[0]
+                                is_group = True
+                            elif not permission_data['permission_group_name'] and permission_data['permission_user_name']:
+                                permission_user_or_group_id = get_user_id(
+                                    server, permission_data['permission_user_name'])[0]
+                                is_group = False
+                            else:
+                                logging.info(
+                                    "permission_group_name and permission_user_name are both null, Please provide anyone of that.")
 
                             # get permissions of specific workbook
                             user_permissions = query_permission(
-                                data, wb_id, permission_user_id, version, auth_token)
+                                data, wb_id, permission_user_or_group_id, version, auth_token, is_group)
 
                             for permission_name, permission_mode in permission_data['permission_template'].items():
                                 update_permission_flag = True
                                 if user_permissions is None:
                                     add_permission(
-                                        data, wb_id, permission_user_id, version, auth_token, permission_name, permission_mode)
+                                        data, wb_id, permission_user_or_group_id, version, auth_token, permission_name, permission_mode, is_group)
                                     print(
                                         f"\tPermission {permission_name} is set to {permission_mode} Successfully in {wb_id}\n")
                                     update_permission_flag = False
@@ -210,7 +247,7 @@ def main(arguments):
                                                 existing_mode = permission.get(
                                                     'mode')
                                                 delete_permission(
-                                                    data, auth_token, wb_id, permission_user_id, permission_name, existing_mode, version)
+                                                    data, auth_token, wb_id, permission_user_or_group_id, permission_name, existing_mode, version, is_group)
                                                 update_permission_flag = True
                                                 print(
                                                     f"\tPermission {permission_name} : {existing_mode} is deleted Successfully in {wb_id}\n")
@@ -219,12 +256,13 @@ def main(arguments):
 
                                 if update_permission_flag:
                                     add_permission(
-                                        data, wb_id, permission_user_id, version, auth_token, permission_name, permission_mode)
+                                        data, wb_id, permission_user_or_group_id, version, auth_token, permission_name, permission_mode, is_group)
                                     print(
                                         f"\tPermission {permission_name} is set to {permission_mode} Successfully in {wb_id}\n")
                                 else:
                                     print(
                                         f"\tPermission {permission_name} is already set to {permission_mode} on {data['name']}\n")
+
                         else:
                             logging.info(
                                 "Something went wrong, Error occured.\n User Name or List of Permissions in template are null")
@@ -237,7 +275,7 @@ def main(arguments):
 
     except Exception as tableu_exception:
         logging.error(
-            "Something went wrong, Error occured.\n %s", tableu_exception)
+            "Something went wrong, Exception Fired.\n %s", tableu_exception)
         exit(1)
 
 

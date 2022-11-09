@@ -18,11 +18,11 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
         with:
-          # lfs: true
+          lfs: true
           fetch-depth: 0
 
-      # - name: Checkout LFS objects
-      #   run: git lfs checkout
+      - name: Checkout LFS objects
+        run: git lfs checkout
 
       - name: Setup Python
         uses: actions/setup-python@v3

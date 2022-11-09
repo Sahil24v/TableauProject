@@ -203,7 +203,7 @@ def main(arguments):
                     "The project_path field is Null in JSON Template.")
             else:
                 # Step: Form a new workbook item and publish.
-                # publish_workbook(server, data)
+                publish_workbook(server, data)
 
                 if data['permissions']:
                     for permission_data in data['permissions']:

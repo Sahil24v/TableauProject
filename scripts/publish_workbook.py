@@ -99,13 +99,13 @@ def get_workbook_id(server, data):
     return workbook_id_list
 
 
-def get_group_id(server, data):
+def get_group_id(server, permission_group_name):
     """
     Function Description
     """
     all_groups, pagination_item = server.groups.get()
     group_id_list = [
-        group.id for group in all_groups if group.name == data['name']]
+        group.id for group in all_groups if group.name == permission_group_name]
     print("type(group_id_list) ::", type(group_id_list))
     return group_id_list
 
@@ -198,62 +198,58 @@ def main(arguments):
                         if permission_data['permission_template']:
 
                             # Step: Get the Workbook ID from the Workbook Name
-                            # wb_id = get_workbook_id(server, data)[0]
-
-                            # print(
-                            #     f"permission_data['permission_group_name'] :: {permission_data['permission_group_name']}, permission_data['permission_group_name'] and not permission_data['permission_user_name'] :: {permission_data['permission_group_name'] and not permission_data['permission_user_name']}")
-                            # print(
-                            #     f"permission_data['permission_user_name'] :: {permission_data['permission_user_name']}, not permission_data['permission_group_name'] and permission_data['permission_user_name'] :: {permission_data['permission_user_name'] and not permission_data['permission_group_name']}")
-                            print(1)
+                            wb_id = get_workbook_id(server, data)[0]
 
                             # Step: Get the User or Group ID of permission assigned
-                            # if permission_data['permission_group_name'] and not permission_data['permission_user_name']:
-                            #     permission_user_or_group_id = get_group_id(
-                            #         server, permission_data['permission_group_name'])
-                            #     print(f"permission_user_or_group_id :: {permission_user_or_group_id}, type :: {type(permission_user_or_group_id)}")
-                            # elif not permission_data['permission_group_name'] and permission_data['permission_user_name']:
-                            #     permission_user_or_group_id = get_user_id(
-                            #         server, permission_data['permission_user_name'])[0]
-                            #     print(f"permission_user_or_group_id :: {permission_user_or_group_id}")
-                            # else:
-                            #     logging.info(
-                            #         "permission_group_name and permission_user_name are both null, Please provide anyone of that.")
+                            if permission_data['permission_group_name'] and not permission_data['permission_user_name']:
+                                permission_user_or_group_id = get_group_id(
+                                    server, permission_data['permission_group_name'])
+                                print(
+                                    f"permission_user_or_group_id :: {permission_user_or_group_id}, type :: {type(permission_user_or_group_id)}")
+                            elif not permission_data['permission_group_name'] and permission_data['permission_user_name']:
+                                permission_user_or_group_id = get_user_id(
+                                    server, permission_data['permission_user_name'])[0]
+                                print(
+                                    f"permission_user_or_group_id :: {permission_user_or_group_id}")
+                            else:
+                                logging.info(
+                                    "permission_group_name and permission_user_name are both null, Please provide anyone of that.")
 
                             # get permissions of specific workbook
-                            # user_permissions = query_permission(
-                            #     data, wb_id, permission_user_or_group_id, version, auth_token)
+                            user_permissions = query_permission(
+                                data, wb_id, permission_user_or_group_id, version, auth_token)
 
-                            # for permission_name, permission_mode in permission_data['permission_template'].items():
-                            #     update_permission_flag = True
-                            #     if user_permissions is None:
-                            #         add_permission(
-                            #             data, wb_id, permission_user_or_group_id, version, auth_token, permission_name, permission_mode)
-                            #         print(
-                            #             f"\tPermission {permission_name} is set to {permission_mode} Successfully in {wb_id}\n")
-                            #         update_permission_flag = False
-                            #     else:
-                            #         for permission in user_permissions:
-                            #             if permission.get('name') == permission_name:
-                            #                 if permission.get('mode') != permission_mode:
-                            #                     existing_mode = permission.get(
-                            #                         'mode')
-                            #                     delete_permission(
-                            #                         data, auth_token, wb_id, permission_user_or_group_id, permission_name, existing_mode, version)
-                            #                     update_permission_flag = True
-                            #                     print(
-                            #                         f"\tPermission {permission_name} : {existing_mode} is deleted Successfully in {wb_id}\n")
-                            #                 else:
-                            #                     update_permission_flag = False
+                            for permission_name, permission_mode in permission_data['permission_template'].items():
+                                update_permission_flag = True
+                                if user_permissions is None:
+                                    add_permission(
+                                        data, wb_id, permission_user_or_group_id, version, auth_token, permission_name, permission_mode)
+                                    print(
+                                        f"\tPermission {permission_name} is set to {permission_mode} Successfully in {wb_id}\n")
+                                    update_permission_flag = False
+                                else:
+                                    for permission in user_permissions:
+                                        if permission.get('name') == permission_name:
+                                            if permission.get('mode') != permission_mode:
+                                                existing_mode = permission.get(
+                                                    'mode')
+                                                delete_permission(
+                                                    data, auth_token, wb_id, permission_user_or_group_id, permission_name, existing_mode, version)
+                                                update_permission_flag = True
+                                                print(
+                                                    f"\tPermission {permission_name} : {existing_mode} is deleted Successfully in {wb_id}\n")
+                                            else:
+                                                update_permission_flag = False
 
-                            #     if update_permission_flag:
-                            #         add_permission(
-                            #             data, wb_id, permission_user_or_group_id, version, auth_token, permission_name, permission_mode)
-                            #         print(
-                            #             f"\tPermission {permission_name} is set to {permission_mode} Successfully in {wb_id}\n")
-                            #     else:
-                            #         print(
-                            #             f"\tPermission {permission_name} is already set to {permission_mode} on {data['name']}\n")
-                        
+                                if update_permission_flag:
+                                    add_permission(
+                                        data, wb_id, permission_user_or_group_id, version, auth_token, permission_name, permission_mode)
+                                    print(
+                                        f"\tPermission {permission_name} is set to {permission_mode} Successfully in {wb_id}\n")
+                                else:
+                                    print(
+                                        f"\tPermission {permission_name} is already set to {permission_mode} on {data['name']}\n")
+
                         else:
                             logging.info(
                                 "Something went wrong, Error occured.\n User Name or List of Permissions in template are null")

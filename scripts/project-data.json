@@ -13,50 +13,6 @@
       "is_site_default": true,
       "permissions": [
         {
-          "permission_group_name": "",
-          "permission_user_name": "Nirav.Padia",
-          "permission_template": {
-            "Read": "Allow",
-            "Write": "Allow",
-            "Filter": "Allow",
-            "AddComment": "Allow",
-            "ViewComments": "Allow",
-            "ShareView": "Allow",
-            "ExportData": "Allow",
-            "ViewUnderlyingData": "Allow",
-            "ExportImage": "Allow",
-            "Delete": "Allow",
-            "ChangeHierarchy": "Allow",
-            "ChangePermissions": "Allow",
-            "WebAuthoring": "Allow",
-            "ExportXml": "Allow",
-            "RunExplainData": "Allow",
-            "CreateRefreshMetrics": "Allow"
-          }
-        },
-        {
-          "permission_group_name": "",
-          "permission_user_name": "Venkateswarlu.Velisetty",
-          "permission_template": {
-            "Read": "Allow",
-            "Write": "Allow",
-            "Filter": "Allow",
-            "AddComment": "Allow",
-            "ViewComments": "Allow",
-            "ShareView": "Allow",
-            "ExportData": "Allow",
-            "ViewUnderlyingData": "Allow",
-            "ExportImage": "Allow",
-            "Delete": "Allow",
-            "ChangeHierarchy": "Allow",
-            "ChangePermissions": "Allow",
-            "WebAuthoring": "Allow",
-            "ExportXml": "Allow",
-            "RunExplainData": "Allow",
-            "CreateRefreshMetrics": "Allow"
-          }
-        },
-        {
           "permission_group_name": "All Users",
           "permission_user_name": "",
           "permission_template": {

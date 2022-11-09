@@ -208,6 +208,7 @@ def main(arguments):
                 if data['permissions']:
                     for permission_data in data['permissions']:
                         if permission_data['permission_template']:
+                            print("---------------------------------------------------------------------------------------------------------------------------------")
 
                             is_group = None
 
@@ -227,22 +228,17 @@ def main(arguments):
                                 logging.info(
                                     "permission_group_name and permission_user_name are both null, Please provide anyone of that.")
 
-                            print(f"is_group :: {is_group}")
-
                             # get permissions of specific workbook
                             user_permissions = query_permission(
                                 data, wb_id, permission_user_or_group_id, version, auth_token, is_group)
 
-                            print("Get User Permissions Done")
-
                             for permission_name, permission_mode in permission_data['permission_template'].items():
                                 update_permission_flag = True
                                 if user_permissions is None:
-                                    print("user_permissions is emtpy")
                                     add_permission(
                                         data, wb_id, permission_user_or_group_id, version, auth_token, permission_name, permission_mode, is_group)
-                                    # print(
-                                    #     f"\tPermission {permission_name} is set to {permission_mode} Successfully in {wb_id}\n")
+                                    print(
+                                        f"\tPermission {permission_name} is set to {permission_mode} Successfully in {wb_id}\n")
                                     update_permission_flag = False
                                 else:
                                     for permission in user_permissions:
@@ -253,20 +249,19 @@ def main(arguments):
                                                 delete_permission(
                                                     data, auth_token, wb_id, permission_user_or_group_id, permission_name, existing_mode, version, is_group)
                                                 update_permission_flag = True
-                                                # print(
-                                                #     f"\tPermission {permission_name} : {existing_mode} is deleted Successfully in {wb_id}\n")
+                                                print(
+                                                    f"\tPermission {permission_name} : {existing_mode} is deleted Successfully in {wb_id}\n")
                                             else:
                                                 update_permission_flag = False
 
                                 if update_permission_flag:
-                                    print("In sbnlgb")
                                     add_permission(
                                         data, wb_id, permission_user_or_group_id, version, auth_token, permission_name, permission_mode, is_group)
-                                    # print(
-                                    #     f"\tPermission {permission_name} is set to {permission_mode} Successfully in {wb_id}\n")
-                                # else:
-                                #     print(
-                                #         f"\tPermission {permission_name} is already set to {permission_mode} on {data['name']}\n")
+                                    print(
+                                        f"\tPermission {permission_name} is set to {permission_mode} Successfully in {wb_id}\n")
+                                else:
+                                    print(
+                                        f"\tPermission {permission_name} is already set to {permission_mode} on {data['name']}\n")
 
                         else:
                             logging.info(

@@ -121,7 +121,7 @@ def get_user_id(server, permission_user_name):
     return user_id_list
 
 
-def query_permission(data, wb_id, user_id, version, auth_token):
+def query_permission(data, wb_id, user_id, version, auth_token, user_or_group):
     """
     Funcrion Description
     """
@@ -136,7 +136,7 @@ def query_permission(data, wb_id, user_id, version, auth_token):
         './/t:granteeCapabilities', namespaces=xmlns)
 
     for capability in capabilities:
-        user = capability.find('.//t:user', namespaces=xmlns)
+        user = capability.find(user_or_group, namespaces=xmlns)
         if user is not None and user.get('id') == user_id:
             return capability.findall('.//t:capability', namespaces=xmlns)
 
@@ -207,18 +207,20 @@ def main(arguments):
                                     server, permission_data['permission_group_name'])[0]
                                 print(
                                     f"permission_user_or_group_id :: {permission_user_or_group_id}, type :: {type(permission_user_or_group_id)}")
+                                user_or_group = ".//t:group"
                             elif not permission_data['permission_group_name'] and permission_data['permission_user_name']:
                                 permission_user_or_group_id = get_user_id(
                                     server, permission_data['permission_user_name'])[0]
                                 print(
                                     f"permission_user_or_group_id :: {permission_user_or_group_id}, type :: {type(permission_user_or_group_id)}")
+                                user_or_group = ".//t:user"
                             else:
                                 logging.info(
                                     "permission_group_name and permission_user_name are both null, Please provide anyone of that.")
 
                             # get permissions of specific workbook
                             user_permissions = query_permission(
-                                data, wb_id, permission_user_or_group_id, version, auth_token)
+                                data, wb_id, permission_user_or_group_id, version, auth_token, user_or_group)
 
                             for permission_name, permission_mode in permission_data['permission_template'].items():
                                 update_permission_flag = True

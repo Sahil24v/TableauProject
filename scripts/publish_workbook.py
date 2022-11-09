@@ -120,7 +120,7 @@ def get_user_id(server, permission_user_name):
     return user_id_list
 
 
-def query_permission(data, wb_id, user_id, version, auth_token, user_or_group):
+def query_permission(data, wb_id, permission_user_or_group_id, version, auth_token, is_group):
     """
     Funcrion Description
     """
@@ -134,13 +134,19 @@ def query_permission(data, wb_id, user_id, version, auth_token, user_or_group):
     capabilities = parsed_response.findall(
         './/t:granteeCapabilities', namespaces=xmlns)
 
-    for capability in capabilities:
-        user_or_group = capability.find(user_or_group, namespaces=xmlns)
-        if user_or_group is not None and user_or_group.get('id') == user_id:
-            return capability.findall('.//t:capability', namespaces=xmlns)
+    if is_group:
+        for capability in capabilities:
+            group = capability.find('.//t:group', namespaces=xmlns)
+            if group is not None and group.get('id') == permission_user_or_group_id:
+                return capability.findall('.//t:capability', namespaces=xmlns)
+    else:
+        for capability in capabilities:
+            user = capability.find('.//t:user', namespaces=xmlns)
+            if user is not None and user.get('id') == permission_user_or_group_id:
+                return capability.findall('.//t:capability', namespaces=xmlns)
 
 
-def add_permission(data, wb_id, user_id, version, auth_token, permission_name, permission_mode):
+def add_permission(data, wb_id, permission_user_or_group_id, version, auth_token, permission_name, permission_mode, is_group):
     """
     Funcrion Description
     """
@@ -150,8 +156,12 @@ def add_permission(data, wb_id, user_id, version, auth_token, permission_name, p
     permissions_element = ET.SubElement(xml_request, 'permissions')
     ET.SubElement(permissions_element, 'workbook', id=wb_id)
     grantee_element = ET.SubElement(permissions_element, 'granteeCapabilities')
-    # ET.SubElement(grantee_element, 'user', id=user_id)
-    ET.SubElement(grantee_element, 'group', id=user_id)
+
+    if is_group:
+        ET.SubElement(grantee_element, 'group', id=permission_user_or_group_id)
+    else:
+        ET.SubElement(grantee_element, 'user', id=permission_user_or_group_id)
+
     capabilities_element = ET.SubElement(grantee_element, 'capabilities')
     ET.SubElement(capabilities_element, 'capability',
                   name=permission_name, mode=permission_mode)
@@ -197,6 +207,8 @@ def main(arguments):
                     for permission_data in data['permissions']:
                         if permission_data['permission_template']:
 
+                            is_group = None
+
                             # Step: Get the Workbook ID from the Workbook Name
                             wb_id = get_workbook_id(server, data)[0]
 
@@ -204,24 +216,24 @@ def main(arguments):
                             if permission_data['permission_group_name'] and not permission_data['permission_user_name']:
                                 permission_user_or_group_id = get_group_id(
                                     server, permission_data['permission_group_name'])[0]
-                                user_or_group = ".//t:group"
+                                is_group = True
                             elif not permission_data['permission_group_name'] and permission_data['permission_user_name']:
                                 permission_user_or_group_id = get_user_id(
                                     server, permission_data['permission_user_name'])[0]
-                                user_or_group = ".//t:user"
+                                is_group = False
                             else:
                                 logging.info(
                                     "permission_group_name and permission_user_name are both null, Please provide anyone of that.")
 
                             # get permissions of specific workbook
                             user_permissions = query_permission(
-                                data, wb_id, permission_user_or_group_id, version, auth_token, user_or_group)
+                                data, wb_id, permission_user_or_group_id, version, auth_token, is_group)
 
                             for permission_name, permission_mode in permission_data['permission_template'].items():
                                 update_permission_flag = True
                                 if user_permissions is None:
                                     add_permission(
-                                        data, wb_id, permission_user_or_group_id, version, auth_token, permission_name, permission_mode)
+                                        data, wb_id, permission_user_or_group_id, version, auth_token, permission_name, permission_mode, is_group)
                                     print(
                                         f"\tPermission {permission_name} is set to {permission_mode} Successfully in {wb_id}\n")
                                     update_permission_flag = False
@@ -241,7 +253,7 @@ def main(arguments):
 
                                 if update_permission_flag:
                                     add_permission(
-                                        data, wb_id, permission_user_or_group_id, version, auth_token, permission_name, permission_mode)
+                                        data, wb_id, permission_user_or_group_id, version, auth_token, permission_name, permission_mode, is_group)
                                     print(
                                         f"\tPermission {permission_name} is set to {permission_mode} Successfully in {wb_id}\n")
                                 else:

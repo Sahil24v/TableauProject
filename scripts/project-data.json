@@ -38,19 +38,19 @@
           "permission_user_name": "Venkateswarlu.Velisetty",
           "permission_template": {
             "Read": "Allow",
-            "Write": "Allow",
+            "Write": "Deny",
             "Filter": "Allow",
-            "AddComment": "Allow",
+            "AddComment": "Deny",
             "ViewComments": "Deny",
             "ShareView": "Deny",
             "ExportData": "Deny",
             "ViewUnderlyingData": "Deny",
             "ExportImage": "Allow",
             "Delete": "Deny",
-            "ChangeHierarchy": "Deny",
+            "ChangeHierarchy": "Allow",
             "ChangePermissions": "Allow",
             "WebAuthoring": "Deny",
-            "ExportXml": "Deny",
+            "ExportXml": "Allow",
             "RunExplainData": "Allow",
             "CreateRefreshMetrics": "Deny"
           }
